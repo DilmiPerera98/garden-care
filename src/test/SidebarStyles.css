@@ -1,0 +1,70 @@
+* {
+  font-family: "Helvetica Neue", sans-serif;
+}
+
+.Navbar{
+    display: flex;
+   justify-content: space-between;
+   align-items: center;
+   font-size: 1.2rem;
+   padding: 0 30px;
+   background-color: #236B51;
+   box-shadow: 0 5px 15px rgba(35,107,81,0.3);
+   width: 95vw;
+   height: 80px;
+   position: sticky;
+   top: 10px;
+   font-family:'Helvetica Neue',
+   sans-serif; 
+   margin-bottom: 8px;
+}
+
+
+.container {
+  display: flex;
+  width: 90%;
+}
+
+main {
+  padding: 10px;
+  
+}
+
+.sidebar {
+  background: #236b51;
+  color: aliceblue;
+  height: 100vh;
+  padding: 3px;
+  transition: all 0.5s;
+  /* position: fixed; */
+}
+
+.bars{
+     font-size: 2rem;
+     padding: 12px;
+}
+
+.link{
+    display: flex;
+    color: aliceblue;
+    padding: 10px 15px;
+    gap: 15px;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+.link:hover{
+    background: #A0D5C2;
+    color: aliceblue;
+    transition: all 0.1s;
+    border-radius: 5px;
+}
+
+.active{
+    background: #A0D5C2;
+    color: aliceblue;
+}
+
+.icon {
+    font-size: 1.5rem;
+}
