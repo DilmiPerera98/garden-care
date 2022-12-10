@@ -181,30 +181,14 @@ function ViewCustomerData() {
   const modalOpen = () => setOpen(true);
 
   return (
-    <>
-      <Box
-        sx={{
-          display: "flex",
-          width: "100%",
-          justifyContent: "flex-end",
-        }}
-      >
-        <Button
-          onClick={modalOpen}
-          variant="contained"
-          sx={{
-            ":hover": {
-              bgcolor: "#A0D5C2",
-            },
-            mt: 3,
-            mb: 2,
-            backgroundColor: "#24936B",
-          }}
-        >
-          <FaPlus /> Add Customer
-        </Button>
-      </Box>
-
+    <Box
+      sx={{
+        display: "flex",
+        width: "100%",
+        justifyContent: "flex-end",
+        mt: 5,
+      }}
+    >
       <Paper sx={{ width: "100%", overflow: "hidden" }}>
         <TableContainer sx={{ maxHeight: "65vh", width: "78vw" }}>
           <Table stickyHeader aria-label="sticky table">
@@ -260,7 +244,7 @@ function ViewCustomerData() {
 
         <AddCustomer setOpen={setOpen} open={open} />
       </Paper>
-    </>
+    </Box>
   );
 }
 

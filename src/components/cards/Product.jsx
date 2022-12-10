@@ -1,0 +1,49 @@
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
+import Typography from "@mui/material/Typography";
+import { CardActionArea, Grid, Rating } from "@mui/material";
+import React from "react";
+import PriceModal from "../Modal/PriceModal";
+
+function Product(props) {
+  const { product } = props;
+
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  return (
+    <Grid item md={2.4}>
+      <Card sx={{ width: "16rem", height: "23rem" }}>
+        <CardActionArea onClick={handleOpen}>
+          <CardMedia
+            component="img"
+            image={product.img}
+            alt="green iguana"
+            sx={{ width: "16rem", height: "16rem" }}
+          />
+          <CardContent>
+            <Typography gutterBottom variant="h5" component="div">
+              Rs. {product.price}.00
+            </Typography>
+
+            <Typography variant="body2" color="text.secondary">
+              {product.productName}
+            </Typography>
+
+            <Rating
+              name="half-rating"
+              defaultValue={product.rating}
+              precision={0.5}
+              readOnly
+            />
+          </CardContent>
+        </CardActionArea>
+        <PriceModal open={open} setOpen={setOpen} slug={product.slug} />
+      </Card>
+    </Grid>
+  );
+}
+export default Product;

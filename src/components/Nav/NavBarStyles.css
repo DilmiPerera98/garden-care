@@ -1,60 +1,63 @@
-.NavbarItems{
-     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 1.2rem;
-    padding: 0 30px;
-    background-color: #236B51;
-    box-shadow: 0 5px 15px rgba(35,107,81,0.3);
-    width: 95%;
-    height: 80px;
-    border-radius: 10px;
-    position: sticky;
-    top: 10px;
-    left: 50%;
-     transform: translate(-0.5%);  
-    font-family:'Helvetica Neue',
-    sans-serif; 
-    margin-bottom: 40px;
+.NavbarItems {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.2rem;
+  padding: 0 30px;
+  background-color: #236b51;
+  box-shadow: 0 5px 15px rgba(35, 107, 81, 0.3);
+  width: 95%;
+  height: 80px;
+  border-radius: 10px;
+  position: sticky;
+  top: 10px;
+  left: 50%;
+  transform: translate(-0.5%);
+  font-family: "Helvetica Neue", sans-serif;
+  margin-bottom: 40px;
 }
 
-.NavMenu{
-    display: grid;
-    grid-template-columns: repeat(7,auto);
-    grid-gap: 10px;
-    list-style: none;
-    align-items: center;
-    text-align: center;
-    justify-content: end;
-    
-} 
-
-.nav-links{
-    text-decoration: none;
-    color: aliceblue;
-    padding: 0.7rem 1rem;
-    white-space: nowrap;
+.NavMenu {
+  display: grid;
+  grid-template-columns: repeat(7, auto);
+  grid-gap: 10px;
+  list-style: none;
+  align-items: center;
+  text-align: center;
+  justify-content: end;
 }
 
-.nav-links:active{
-    background: aliceblue;
-    border-radius: 4px;
-    transition: all 0.2s ease-in-out;
-    color: #236B51;  
+.nav-links {
+  text-decoration: none;
+  color: aliceblue;
+  padding: 0.7rem 1rem;
+  white-space: nowrap;
 }
 
-.nav-links:hover{
-    background: aliceblue;
-    border-radius: 4px;
-    transition: all 0.2s ease-in-out;
-    color: #236B51;
+.nav-link {
+  text-decoration: none;
+  color: black;
 }
 
-.imglogo{
-    width: 50px;
-    height: 50px;
+.nav-links:active {
+  background: aliceblue;
+  border-radius: 4px;
+  transition: all 0.2s ease-in-out;
+  color: #236b51;
 }
 
-li{
-    color: aliceblue;
+.nav-links:hover {
+  background: aliceblue;
+  border-radius: 4px;
+  transition: all 0.2s ease-in-out;
+  color: #236b51;
+}
+
+.imglogo {
+  width: 50px;
+  height: 50px;
+}
+
+li {
+  color: aliceblue;
 }

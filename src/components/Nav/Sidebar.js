@@ -12,9 +12,10 @@ import IconButton from "@mui/material/IconButton";
 import Badge from "@mui/material/Badge";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import { FaAngleLeft, FaBars} from "react-icons/fa";
+import { FaAngleLeft, FaBars, FaPowerOff } from "react-icons/fa";
 import logoimg from "../../Resources/logo.png";
 import { SideMenu } from "./SideMenu";
+import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 /* import { mainListItems, secondaryListItems } from './listItems'; */
 
 const drawerWidth = 240;
@@ -65,7 +66,7 @@ const Drawer = styled(MuiDrawer, {
 
 const mdTheme = createTheme();
 
-function SidebarContent({titleHeading,mainComp}) {
+function SidebarContent({ titleHeading, mainComp }) {
   const [open, setOpen] = React.useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
@@ -104,14 +105,14 @@ function SidebarContent({titleHeading,mainComp}) {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-             {titleHeading}   
+              {titleHeading}
             </Typography>
 
-            <IconButton color="inherit">
+            {/* <IconButton color="inherit">
               <Badge badgeContent={4} color="secondary">
-                {/* <NotificationsIcon /> */}
+                <FaBars />
               </Badge>
-            </IconButton>
+            </IconButton> */}
           </Toolbar>
         </AppBar>
         <Drawer
@@ -121,7 +122,7 @@ function SidebarContent({titleHeading,mainComp}) {
             sx: {
               background: "#236b51",
             },
-          }} 
+          }}
         >
           <Toolbar
             sx={{
@@ -138,18 +139,15 @@ function SidebarContent({titleHeading,mainComp}) {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-                <img alt="Logo" className="imglogo" src={logoimg} />
-                Garden Care
+              <img alt="Logo" className="imglogo" src={logoimg} />
+              Garden Care
             </Typography>
             <IconButton onClick={toggleDrawer}>
               <FaAngleLeft />
             </IconButton>
           </Toolbar>
           <Divider />
-          <List component="nav">
-            {SideMenu}
-            <Divider sx={{ my: 1 }} />
-          </List>
+          <List component="nav">{SideMenu}</List>
         </Drawer>
         <Box
           component="main"
@@ -165,10 +163,9 @@ function SidebarContent({titleHeading,mainComp}) {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-           <Grid container spacing={3}>
-
+            <Grid container spacing={3}>
               {mainComp}
-           </Grid>
+            </Grid>
           </Container>
         </Box>
       </Box>
@@ -176,8 +173,12 @@ function SidebarContent({titleHeading,mainComp}) {
   );
 }
 
-export default function Sidebar({title,component}) {
-  return <SidebarContent titleHeading={title} mainComp={component} />;
+export default function Sidebar({ title, component }) {
+  return (
+    <>
+      <SidebarContent titleHeading={title} mainComp={component} />
+    </>
+  );
 }
 /* export default function Sidebar({title,component}) {
   return <SidebarContent titleHeading={title} mainComp={component} />;

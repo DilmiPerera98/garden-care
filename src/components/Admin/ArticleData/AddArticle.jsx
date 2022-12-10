@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import React from "react";
 
-function AddInventory({ open, setOpen }) {
+function AddArticle({ open, setOpen }) {
   function handleClose() {
     setOpen(false);
   }
@@ -38,64 +38,70 @@ function AddInventory({ open, setOpen }) {
               display="flex"
               justifyContent="center"
             >
-              Add
+              Add new Article
             </Typography>
 
-            <Box sx={{display:"flex", flexDirection: "row",alignItems: "center",m:1}}>
-            <Typography pl={1} pt={1} sx={{width:"25%"}}>
-              Product Id
-            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                m: 1,
+              }}
+            >
+              <Typography pl={1} pt={1} sx={{ width: "25%" }}>
+                Article Id
+              </Typography>
               <TextField
                 sx={{ paddingLeft: "10px", mt: "0.5rem", width: "70%" }}
-                placeholder="Product Id"
+                placeholder="Article Id"
                 size="small"
               ></TextField>
             </Box>
 
-            <Box sx={{display:"flex", flexDirection: "row",alignItems: "center",m:1}}>
-            <Typography pl={1} pt={1} sx={{width:"25%"}}>
-              Category Id
-            </Typography>
-              <TextField
-                sx={{ paddingLeft: "10px", mt: "0.5rem", width: "70%" }}
-                placeholder="Product Name"
-                size="small"
-              ></TextField>
-            </Box>
-
-            <Box sx={{display:"flex", flexDirection: "row",alignItems: "center",m:1}}>
-            <Typography pl={1} pt={1} sx={{width:"25%"}}>
-              Available Quantity
-            </Typography>
-              <TextField
-                sx={{ paddingLeft: "10px", mt: "0.5rem", width: "70%" }}
-                placeholder="Category"
-                size="small"
-              ></TextField>
-            </Box>
-
-            <Box sx={{display:"flex", flexDirection: "row",alignItems: "center",m:1}}>
-            <Typography pl={1} pt={1} sx={{width:"25%"}}>
-              Price per Unit
-            </Typography>
-              <TextField
-                sx={{ paddingLeft: "10px", mt: "0.5rem", width: "70%" }}
-                placeholder="Price"
-                size="small"
-              ></TextField>
-            </Box>
-
-            <Box sx={{display:"flex", flexDirection: "row",alignItems: "center",m:1}}>
-            <Typography pl={1} pt={1} sx={{width:"25%"}}>
-              Status
-            </Typography>
-            <FormControl
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                m: 1,
+              }}
+            >
+              <Typography pl={1} pt={1} sx={{ width: "25%" }}>
+                Article Type
+              </Typography>
+              <FormControl
                 sx={{ paddingLeft: "10px", mt: "0.5rem", width: "70%" }}
               >
                 {/*  <InputLabel id="role">Role</InputLabel> */}
                 <Select size="small">
-                  <MenuItem value={"Available"}>Available</MenuItem>
-                  <MenuItem value={"Out of Stock"}>Out of Stock</MenuItem>
+                  <MenuItem value={"Student"}>Pots</MenuItem>
+                  <MenuItem value={"Lecturer"}>Plants</MenuItem>
+                  <MenuItem value={"Lecturer"}>Tools</MenuItem>
+                  <MenuItem value={"Lecturer"}>Fertilizer</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                m: 1,
+              }}
+            >
+              <Typography pl={1} pt={1} sx={{ width: "25%" }}>
+                Article Name
+              </Typography>
+              <FormControl
+                sx={{ paddingLeft: "10px", mt: "0.5rem", width: "70%" }}
+              >
+                {/*  <InputLabel id="role">Role</InputLabel> */}
+                <Select size="small">
+                  <MenuItem value={"Indoor Plants"}>Indoor Plants</MenuItem>
+                  <MenuItem value={"Outdoor Plants"}>Outdoor Plants</MenuItem>
+                  <MenuItem value={"Outdoor Plants"}>Plastic Pots</MenuItem>
+                  <MenuItem value={"Outdoor Plants"}>Clay Pots</MenuItem>
                 </Select>
               </FormControl>
             </Box>
@@ -112,10 +118,10 @@ function AddInventory({ open, setOpen }) {
               <Button
                 variant="outlined"
                 sx={{
-                    ":hover": {
-                        bgcolor: "#A0D5C2",
-                        borderColor: "#A0D5C2",
-                    },
+                  ":hover": {
+                    bgcolor: "#A0D5C2",
+                    borderColor: "#A0D5C2",
+                  },
                   color: "#24936B",
                   marginRight: "0.5rem",
                   mt: 3,
@@ -147,4 +153,4 @@ function AddInventory({ open, setOpen }) {
   );
 }
 
-export default AddInventory;
+export default AddArticle;

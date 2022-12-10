@@ -27,7 +27,6 @@ const style = {
 
 function OtpModal({ open, setOpen }) {
   //Otp handle
-  const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   //OTP Values

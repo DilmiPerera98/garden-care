@@ -1,5 +1,6 @@
-import { Box, Button, Card, Grid, Paper, Typography } from "@mui/material";
+import { Box, Button, Grid } from "@mui/material";
 import { Link } from "react-router-dom";
+import ContactUs from "../components/cards/ContactUs";
 import homeimg from "../Resources/home4.jpeg";
 export default function Home() {
   return (
@@ -18,7 +19,7 @@ export default function Home() {
           </Grid>
 
           <Grid item xs={8}>
-            <h1 className="topic">Gargen Care</h1>
+            <h1 className="topic">Garden Care</h1>
             <h3>
               Our website is here for anyone looking for success with their
               indoor gardening or help getting their houseplants to thrive.
@@ -79,24 +80,7 @@ export default function Home() {
 
           </Card> */}
           <Grid item md={16}>
-            <Card sx={{backgroundColor:"#181a19",pl:3,mt:"10vh",color:"white"}}>
-              <h2>Contact Us</h2>
-              <Box sx={{ display: "flex", flexDirection: "row",justifyContent:"center"}}>
-                <Box sx={{width:"35vw"}}>
-                  <Typography>Call Us</Typography>
-                  <Typography>038 2249112</Typography>
-                </Box>
-                <Box sx={{width:"35vw"}}>
-                  <Typography>Address</Typography>
-                  <Typography>avvbb</Typography>
-                  <Typography>vfdh</Typography>
-                </Box>
-                <Box sx={{width:"35vw"}}>
-                  <Typography>Email</Typography>
-                  <Typography>038 2249112</Typography>
-                </Box>
-              </Box>
-            </Card>
+            <ContactUs />
           </Grid>
         </Grid>
       </Box>

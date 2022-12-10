@@ -1,4 +1,4 @@
-import React, { useState }from "react";
+import React, { useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -9,44 +9,31 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import { FaEdit, FaPlus } from "react-icons/fa";
 import { Box, Button } from "@mui/material";
-import AddInventory from "./AddInventory";
+import AddAricle from "./AddArticle";
 
-function createData(productId, categoryId, availableQuantity, ppu,status, action) {
+function createData(articleId, articleImage, articleTitle, action) {
   return {
-    productId,
-    categoryId,
-    availableQuantity,
-    ppu,
-    status,
+    articleId,
+    articleImage,
+    articleTitle,
     action,
   };
 }
 
 const headCells = [
   {
-    id: "productId",
-    label: "Product ID",
+    id: "articleId",
+    label: "article ID",
     align: "center",
   },
   {
-    id: "categoryId",
-    label: "Category Id",
+    id: "articleImage",
+    label: "article Image",
     align: "center",
   },
   {
-    id: "availableQuantity",
-    label: "Available Quantity",
-    align: "center",
-  },
-  {
-    id: "ppu",
-    label: " Price per unit",
-    align: "center",
-  },
-  
-  {
-    id: "status",
-    label: "Status",
+    id: "articleTitle",
+    label: "article Title",
     align: "center",
   },
   {
@@ -59,77 +46,15 @@ const headCells = [
 const rows = [
   createData(
     "1",
-    "2",
-    "1",
-    "250",
-    "Available",
-    <Button>
-      <FaEdit />
-    </Button>
-  ),
-  createData(
-    "2",
-    "2",
-    "1",
-    "250",
-    "Out of stock",
-    <Button>
-      <FaEdit />
-    </Button>
-  ),
-  createData(
-    "1",
-    "2",
-    "1",
-    "250",
-    "Available",
-    <Button>
-      <FaEdit />
-    </Button>
-  ),
-  createData(
-    "1",
-    "2",
-    "1",
-    "200",
-    "Available",
-    <Button>
-      <FaEdit />
-    </Button>
-  ),
-  createData(
-    "1",
-    "2",
-    "1",
-    "250",
-    "Out of stock",
-    <Button>
-      <FaEdit />
-    </Button>
-  ),
-  createData(
-    "1",
-    "2",
-    "1",
-    "250",
-    "Available",
-    <Button>
-      <FaEdit />
-    </Button>
-  ),
-  createData(
-    "1",
-    "2",
-    "1",
-    "250",
-    "Available",
+    "pots",
+    "plastic pots",
     <Button>
       <FaEdit />
     </Button>
   ),
 ];
 
-function ViewInventoryData() {
+function ViewProductData() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -142,7 +67,7 @@ function ViewInventoryData() {
     setPage(0);
   };
 
-  //AddInventoryModal
+  //AddAricleModal
   const [open, setOpen] = useState(false);
   const modalOpen = () => setOpen(true);
 
@@ -167,7 +92,7 @@ function ViewInventoryData() {
             backgroundColor: "#24936B",
           }}
         >
-          <FaPlus /> Add 
+          <FaPlus /> Add article
         </Button>
       </Box>
 
@@ -224,10 +149,10 @@ function ViewInventoryData() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
 
-<AddInventory setOpen={setOpen} open={open}  />
+        <AddAricle setOpen={setOpen} open={open} />
       </Paper>
     </>
   );
 }
 
-export default ViewInventoryData;
+export default ViewProductData;

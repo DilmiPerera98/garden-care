@@ -1,4 +1,4 @@
-import React, { useState }from "react";
+import React, { useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -11,7 +11,7 @@ import { FaEdit, FaPlus } from "react-icons/fa";
 import { Box, Button } from "@mui/material";
 import Addorder from "./AddOrder";
 
-function createData(orderId, customerId, orderDate, price,status, action) {
+function createData(orderId, customerId, orderDate, price, status, action) {
   return {
     orderId,
     customerId,
@@ -72,7 +72,7 @@ const rows = [
     "07/10/2022",
     "250",
     "Completed",
-    
+
     <Button>
       <FaEdit />
     </Button>
@@ -83,7 +83,7 @@ const rows = [
     "07/10/2022",
     "250",
     "Pending",
-   
+
     <Button>
       <FaEdit />
     </Button>
@@ -148,30 +148,14 @@ function ViewOrderData() {
   const modalOpen = () => setOpen(true);
 
   return (
-    <>
-      <Box
-        sx={{
-          display: "flex",
-          width: "100%",
-          justifyContent: "flex-end",
-        }}
-      >
-        <Button
-          onClick={modalOpen}
-          variant="contained"
-          sx={{
-            ":hover": {
-              bgcolor: "#A0D5C2",
-            },
-            mt: 3,
-            mb: 2,
-            backgroundColor: "#24936B",
-          }}
-        >
-          <FaPlus /> Add order
-        </Button>
-      </Box>
-
+    <Box
+      sx={{
+        display: "flex",
+        width: "100%",
+        justifyContent: "flex-end",
+        mt: 5,
+      }}
+    >
       <Paper sx={{ width: "100%", overflow: "hidden" }}>
         <TableContainer sx={{ maxHeight: "65vh", width: "78vw" }}>
           <Table stickyHeader aria-label="sticky table">
@@ -225,9 +209,9 @@ function ViewOrderData() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
 
-<Addorder setOpen={setOpen} open={open}  />
+        <Addorder setOpen={setOpen} open={open} />
       </Paper>
-    </>
+    </Box>
   );
 }
 
