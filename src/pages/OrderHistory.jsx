@@ -5,6 +5,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  TablePagination,
   TableRow,
   Typography,
 } from "@mui/material";
@@ -58,6 +59,18 @@ export default function OrderHistory() {
     fetchData();
   }, [userInfo]);
 
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
   return (
     <Container>
       <Typography sx={{ fontSize: 25, mt: 1, mb: 1 }}>
@@ -68,47 +81,60 @@ export default function OrderHistory() {
       ) : error ? (
         <Message variant="error">{error}</Message>
       ) : (
-        <TableContainer sx={{ maxHeight: "65vh", width: "78vw" }}>
-          <Table stickyHeader aria-label="sticky table">
-            <TableHead>
-              <TableRow>
-                <TableCell align="center">ID</TableCell>
-                <TableCell align="center">DATE</TableCell>
-                <TableCell align="center">TOTAL</TableCell>
-                <TableCell align="center">PAID</TableCell>
-                <TableCell align="center">DELIVERED</TableCell>
-                <TableCell align="center">ACTIONS</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {orders.map((order) => (
-                <TableRow key={order._id}>
-                  <TableCell align="center">{order._id}</TableCell>
-                  <TableCell align="center">{order.createdAt}</TableCell>
-                  <TableCell align="center">Rs.{order.totalPrice}.00</TableCell>
-                  <TableCell align="center">
-                    {order.isPaid ? order.paidAt.subString(0, 10) : "No"}
-                  </TableCell>
-                  <TableCell align="center">
-                    {order.isDelivered
-                      ? order.deliveredAt.subString(0, 10)
-                      : "No"}
-                  </TableCell>
-                  <TableCell align="center">
-                    <Button
-                      type="button"
-                      onClick={() => {
-                        navigate(`/order/${order._id}`);
-                      }}
-                    >
-                      <FaFileAlt />
-                    </Button>
-                  </TableCell>
+        <Box>
+          <TableContainer sx={{ maxHeight: "65vh", width: "78vw" }}>
+            <Table stickyHeader aria-label="sticky table">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">ID</TableCell>
+                  <TableCell align="center">DATE</TableCell>
+                  <TableCell align="center">TOTAL</TableCell>
+                  <TableCell align="center">PAID</TableCell>
+                  <TableCell align="center">DELIVERED</TableCell>
+                  <TableCell align="center">ACTIONS</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {orders.map((order) => (
+                  <TableRow key={order._id}>
+                    <TableCell align="center">{order._id}</TableCell>
+                    <TableCell align="center">{order.createdAt}</TableCell>
+                    <TableCell align="center">
+                      Rs.{order.totalPrice}.00
+                    </TableCell>
+                    <TableCell align="center">
+                      {order.isPaid ? order.paidAt.subString(0, 10) : "No"}
+                    </TableCell>
+                    <TableCell align="center">
+                      {order.isDelivered
+                        ? order.deliveredAt.subString(0, 10)
+                        : "No"}
+                    </TableCell>
+                    <TableCell align="center">
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          navigate(`/order/${order._id}`);
+                        }}
+                      >
+                        <FaFileAlt />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[10, 25, 100]}
+            component="div"
+            count={orders.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </Box>
       )}
     </Container>
   );

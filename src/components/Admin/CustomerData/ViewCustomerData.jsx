@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useReducer, useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -7,51 +7,27 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { FaEdit, FaPlus } from "react-icons/fa";
+import { FaEdit, FaPlus, FaTrashAlt, FaTruckLoading } from "react-icons/fa";
 import { Box, Button } from "@mui/material";
 import AddCustomer from "./AddCustomer";
-
-function createData(
-  customerId,
-  firstName,
-  lastName,
-  address,
-  email,
-  userName,
-  password,
-  action
-) {
-  return {
-    customerId,
-    firstName,
-    lastName,
-    address,
-    email,
-    userName,
-    password,
-    action,
-  };
-}
+import Loading from "../../Loading";
+import Message from "../../Message";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Store } from "../../../store";
+import axios from "axios";
+import { getError } from "../../../utils.js";
+import { toast } from "react-toastify";
 
 const headCells = [
   {
-    id: "customerId",
-    label: "Customer ID",
+    id: "Id",
+    label: "ID",
     align: "center",
   },
   {
-    id: "firstName",
-    label: "FirstName",
-    align: "center",
-  },
-  {
-    id: "lastName",
-    label: "LastName",
-    align: "center",
-  },
-  {
-    id: "address",
-    label: "Address",
+    id: "name",
+    label: "Name",
     align: "center",
   },
   {
@@ -60,13 +36,8 @@ const headCells = [
     align: "center",
   },
   {
-    id: "userName",
-    label: " User Name",
-    align: "center",
-  },
-  {
-    id: "password",
-    label: "Password",
+    id: "isAdmin",
+    label: "Is Admin",
     align: "center",
   },
   {
@@ -76,94 +47,90 @@ const headCells = [
   },
 ];
 
-const rows = [
-  createData(
-    "1",
-    "pots",
-    "plastic pots",
-    "pots",
-    "plastic pots",
-    "pots",
-    "plastic pots",
-    <Button>
-      <FaEdit />
-    </Button>
-  ),
-  createData(
-    "1",
-    "plants",
-    "plants",
-    "pots",
-    "plastic pots",
-    "pots",
-    "plastic pots",
-    <Button>
-      <FaEdit />
-    </Button>
-  ),
-  createData(
-    "2",
-    "pots",
-    "pots",
-    "pots",
-    "plastic pots",
-    "pots",
-    "plastic pots",
-    <Button>
-      <FaEdit />
-    </Button>
-  ),
-  createData(
-    "1",
-    "pots",
-    "pots",
-    "pots",
-    "plastic pots",
-    "pots",
-    "plastic pots",
-    <Button>
-      <FaEdit />
-    </Button>
-  ),
-  createData(
-    "1",
-    "pots",
-    "pots",
-    "pots",
-    "plastic pots",
-    "pots",
-    "plastic pots",
-    <Button>
-      <FaEdit />
-    </Button>
-  ),
-  createData(
-    "1",
-    "pots",
-    "pots",
-    "pots",
-    "plastic pots",
-    "pots",
-    "plastic pots",
-    <Button>
-      <FaEdit />
-    </Button>
-  ),
-  createData(
-    "1",
-    "pots",
-    "pots",
-    "pots",
-    "plastic pots",
-    "pots",
-    "plastic pots",
-    <Button>
-      <FaEdit />
-    </Button>
-  ),
-];
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_REQUEST":
+      return { ...state, loading: true };
+    case "FETCH_SUCCESS":
+      return {
+        ...state,
+        users: action.payload,
+        loading: false,
+      };
+    case "FETCH_FAIL":
+      return { ...state, loading: false, error: action.payload };
+    case "DELETE_REQUEST":
+      return { ...state, loadingDelete: true, successDelete: false };
+    case "DELETE_SUCCESS":
+      return {
+        ...state,
+        loadingDelete: false,
+        successDelete: true,
+      };
+    case "DELETE_FAIL":
+      return { ...state, loadingDelete: false };
+    case "DELETE_RESET":
+      return { ...state, loadingDelete: false, successDelete: false };
+    default:
+      return state;
+  }
+};
 
 function ViewCustomerData() {
+  const navigate = useNavigate();
+  //AddCustomerModal
+  const [open, setOpen] = useState(false);
+  const modalOpen = () => setOpen(true);
+  const [{ loading, error, users, loadingDelete, successDelete }, dispatch] =
+    useReducer(reducer, {
+      loading: true,
+      error: "",
+    });
+
+  const { state } = useContext(Store);
+  const { userInfo } = state;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        dispatch({ type: "FETCH_REQUEST" });
+        const { data } = await axios.get(`/api/users`, {
+          headers: { Authorization: `Bearer ${userInfo.token}` },
+        });
+        dispatch({ type: "FETCH_SUCCESS", payload: data });
+      } catch (err) {
+        dispatch({
+          type: "FETCH_FAIL",
+          payload: getError(err),
+        });
+      }
+    };
+
+    if (successDelete) {
+      dispatch({ type: "DELETE_RESET" });
+    } else {
+      fetchData();
+    }
+  }, [userInfo, successDelete, state, open]);
+
+  const deleteHandler = async (user) => {
+    if (window.confirm("Are you sure to delete?")) {
+      try {
+        dispatch({ type: "DELETE_REQUEST" });
+        await axios.delete(`/api/users/${user._id}`, {
+          headers: { Authorization: `Bearer ${userInfo.token}` },
+        });
+        toast.success("user deleted successfully");
+        dispatch({ type: "DELETE_SUCCESS" });
+      } catch (error) {
+        toast.error(getError(error));
+        dispatch({
+          type: "DELETE_FAIL",
+        });
+      }
+    }
+  };
+
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -176,10 +143,8 @@ function ViewCustomerData() {
     setPage(0);
   };
 
-  //AddCustomerModal
-  const [open, setOpen] = useState(false);
-  const modalOpen = () => setOpen(true);
-
+  const [editId, setEditId] = useState("");
+  console.log(editId);
   return (
     <Box
       sx={{
@@ -189,61 +154,69 @@ function ViewCustomerData() {
         mt: 5,
       }}
     >
-      <Paper sx={{ width: "100%", overflow: "hidden" }}>
-        <TableContainer sx={{ maxHeight: "65vh", width: "78vw" }}>
-          <Table stickyHeader aria-label="sticky table">
-            <TableHead>
-              <TableRow>
-                {headCells.map((column) => (
-                  <TableCell
-                    key={column.id}
-                    align={column.align}
-                    /*  style={{ minWidth: column.minWidth }} */
-                  >
-                    {column.label}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => {
-                  return (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      tabIndex={-1}
-                      key={row.code}
+      {loading ? (
+        <Loading />
+      ) : error ? (
+        <Message variant="error">{error}</Message>
+      ) : (
+        <Paper sx={{ width: "100%", overflow: "hidden" }}>
+          <TableContainer sx={{ maxHeight: "65vh", width: "78vw" }}>
+            <Table stickyHeader aria-label="sticky table">
+              <TableHead>
+                <TableRow>
+                  {headCells.map((column) => (
+                    <TableCell
+                      key={column.id}
+                      align={column.align}
+                      /*  style={{ minWidth: column.minWidth }} */
                     >
-                      {headCells.map((column) => {
-                        const value = row[column.id];
-                        return (
-                          <TableCell key={column.id} align={column.align}>
-                            {column.format && typeof value === "number"
-                              ? column.format(value)
-                              : value}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  );
-                })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 100]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+                      {column.label}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {users.map((user) => (
+                  <TableRow hover role="checkbox" tabIndex={-1} key={user.id}>
+                    <TableCell align="center">{user._id}</TableCell>
+                    <TableCell align="center">{user.name}</TableCell>
+                    <TableCell align="center">{user.email}</TableCell>
+                    <TableCell align="center">{user.isAdmin}</TableCell>
+                    <TableCell align="center">
+                      <Button>
+                        <FaEdit
+                          onClick={() => {
+                            modalOpen();
+                            setEditId(user._id);
+                          }}
+                        />
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          deleteHandler(user);
+                        }}
+                      >
+                        <FaTrashAlt />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[10, 25, 100]}
+            component="div"
+            count={users.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
 
-        <AddCustomer setOpen={setOpen} open={open} />
-      </Paper>
+          <AddCustomer setOpen={setOpen} open={open} editId={editId} />
+        </Paper>
+      )}
     </Box>
   );
 }
