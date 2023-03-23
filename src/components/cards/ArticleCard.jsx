@@ -6,29 +6,30 @@ import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { Link } from "react-router-dom";
+import { Grid } from "@mui/material";
 
-function ArticleCard() {
+function ArticleCard(props) {
   return (
-    <Card sx={{ maxWidth: 345 }}>
-      <CardMedia
-        component="img"
-        height="140"
-        image="https://post.healthline.com/wp-content/uploads/2020/09/Male_Indoor_Plants_732x549-thumbnail-732x549.jpg"
-        alt="green iguana"
-      />
-      <CardContent>
-        <Typography variant="body2" color="text.secondary">
-          How to Plant Snake Plants · Choose a pot with a drainage hole in the
-          bottom. Terra cotta pots work well for snake plants, since they allow
-          the soil to dry...
-        </Typography>
-      </CardContent>
-      <CardActions>
-        <Link to={"/readArticle"}>
-          <Button size="small">See more...</Button>
-        </Link>
-      </CardActions>
-    </Card>
+    <Grid item md={3}>
+      <Card sx={{ maxWidth: "345px", minHeight: "20rem" }}>
+        <CardMedia
+          component="img"
+          sx={{ minHeight: "18rem" }}
+          image={props.article.img}
+          alt="green iguana"
+        />
+        <CardContent>
+          <Typography variant="body2" color="text.secondary">
+            {props.article.name}
+          </Typography>
+        </CardContent>
+        <CardActions>
+          <Link to={`/readArticle/${props.article._id}`}>
+            <Button size="small">See more...</Button>
+          </Link>
+        </CardActions>
+      </Card>
+    </Grid>
   );
 }
 export default ArticleCard;

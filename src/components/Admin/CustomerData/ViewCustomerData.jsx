@@ -8,7 +8,7 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import { FaEdit, FaPlus, FaTrashAlt, FaTruckLoading } from "react-icons/fa";
-import { Box, Button } from "@mui/material";
+import { Box, Button, IconButton } from "@mui/material";
 import AddCustomer from "./AddCustomer";
 import Loading from "../../Loading";
 import Message from "../../Message";
@@ -183,21 +183,22 @@ function ViewCustomerData() {
                     <TableCell align="center">{user.email}</TableCell>
                     <TableCell align="center">{user.isAdmin}</TableCell>
                     <TableCell align="center">
-                      <Button>
+                      <IconButton sx={{ fontSize: "15px" }}>
                         <FaEdit
                           onClick={() => {
                             modalOpen();
                             setEditId(user._id);
                           }}
                         />
-                      </Button>
-                      <Button
+                      </IconButton>
+                      <IconButton
+                        sx={{ fontSize: "15px" }}
                         onClick={() => {
                           deleteHandler(user);
                         }}
                       >
                         <FaTrashAlt />
-                      </Button>
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 ))}

@@ -1,4 +1,4 @@
-import React, { useState }from "react";
+import React, { useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -11,7 +11,7 @@ import { FaEdit, FaPlus } from "react-icons/fa";
 import { Box, Button } from "@mui/material";
 import AddCategory from "./AddCategory";
 
-function createData(categoryId,categoryType, categoryName, action) {
+function createData(categoryId, categoryType, categoryName, action) {
   return {
     categoryId,
     categoryName,
@@ -21,11 +21,6 @@ function createData(categoryId,categoryType, categoryName, action) {
 }
 
 const headCells = [
-  {
-    id: "categoryId",
-    label: "Category ID",
-    align: "center",
-  },
   {
     id: "categoryType",
     label: "Category Type",
@@ -197,7 +192,7 @@ function ViewProductData() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
 
-<AddCategory setOpen={setOpen} open={open}  />
+        <AddCategory setOpen={setOpen} open={open} />
       </Paper>
     </>
   );

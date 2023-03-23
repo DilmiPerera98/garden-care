@@ -18,10 +18,9 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { InputAdornment } from "@mui/material";
 
-function createData(productId, categoryId, soldQuantity, totalSales, action) {
+function createData(productId, soldQuantity, totalSales, action) {
   return {
     productId,
-    categoryId,
     soldQuantity,
     totalSales,
     action,
@@ -32,11 +31,6 @@ const headCells = [
   {
     id: "productId",
     label: "Product ID",
-    align: "center",
-  },
-  {
-    id: "categoryId",
-    label: "Category ID",
     align: "center",
   },
   {
@@ -59,63 +53,24 @@ const headCells = [
 const rows = [
   createData(
     "1",
-    "1",
-    "10",
-    "25000",
+    "5",
+    "Rs. 2500.00",
     <Button>
       <FaEdit />
     </Button>
   ),
   createData(
-    "1",
-    "1",
-    "10",
-    "25000",
+    "2",
+    "2",
+    "5000",
     <Button>
       <FaEdit />
     </Button>
   ),
   createData(
-    "1",
-    "1",
-    "10",
-    "25000",
-    <Button>
-      <FaEdit />
-    </Button>
-  ),
-  createData(
-    "1",
-    "1",
-    "10",
-    "25000",
-    <Button>
-      <FaEdit />
-    </Button>
-  ),
-  createData(
-    "1",
-    "1",
-    "10",
-    "25000",
-    <Button>
-      <FaEdit />
-    </Button>
-  ),
-  createData(
-    "1",
-    "1",
-    "10",
-    "25000",
-    <Button>
-      <FaEdit />
-    </Button>
-  ),
-  createData(
-    "1",
-    "1",
-    "10",
-    "25000",
+    "3",
+    "2",
+    "2500",
     <Button>
       <FaEdit />
     </Button>
@@ -188,7 +143,7 @@ function ViewProductData() {
             </LocalizationProvider>
 
             <TextField
-            placeholder="Enter Product Id"
+              placeholder="Enter Product Id"
               size="small"
               InputProps={{
                 endAdornment: (

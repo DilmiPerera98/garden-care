@@ -16,6 +16,9 @@ import {
   Radio,
   RadioGroup,
   Paper,
+  Select,
+  MenuItem,
+  InputLabel,
 } from "@mui/material";
 import Axios from "axios";
 import React, { useEffect, useMemo, useState } from "react";
@@ -28,6 +31,7 @@ import Loading from "../components/Loading";
 import Message from "../components/Message";
 import { Store } from "../store";
 import { getError } from "../utils";
+import validator from "validator";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -59,13 +63,42 @@ function Checkout() {
       fullNameErrorMsg: { isVisible: false },
     });
   };
-  const handleOnAddress = (event) => {
-    setAddress(event.target.value);
+  const handleOnNumber = (event) => {
+    setNumber(event.target.value);
     setcheckoutError({
       ...checkoutError,
       addressErrorMsg: { isVisible: false },
     });
   };
+  const handleOnLane = (event) => {
+    setLane(event.target.value);
+    setcheckoutError({
+      ...checkoutError,
+      addressErrorMsg: { isVisible: false },
+    });
+  };
+
+  const handleOnCity = (event) => {
+    setCity(event.target.value);
+    setcheckoutError({
+      ...checkoutError,
+      addressErrorMsg: { isVisible: false },
+    });
+  };
+  const handleOnDistrict = (event) => {
+    setDistrict(event.target.value);
+    setcheckoutError({
+      ...checkoutError,
+      addressErrorMsg: { isVisible: false },
+    });
+  };
+  // const handleOnVillage = (event) => {
+  //   setVillage(event.target.value);
+  //   setcheckoutError({
+  //     ...checkoutError,
+  //     addressErrorMsg: { isVisible: false },
+  //   });
+  // };
   const handleOnContactNumber = (event) => {
     setContactNumber(event.target.value);
     setcheckoutError({
@@ -116,9 +149,18 @@ function Checkout() {
     );
   }
 
+  //initialize variables
+  const [shippingPrice, setShippingPrice] = useState(350);
+  const [fullName, setFullName] = useState(checkoutData.fullName || "");
+  const [number, setNumber] = useState("");
+  const [lane, setLane] = useState("");
+  const [address, setAddress] = useState(checkoutData.address || "");
+  const [city, setCity] = useState("");
+  const [district, setDistrict] = useState("");
+  // const [village, setVillage] = useState(checkoutData.village || "");
+
   //place order
   const itemsPrice = bag.bagItems.reduce((a, c) => a + c.price * c.quantity, 0);
-  const shippingPrice = 350;
 
   const totalPrice = itemsPrice + shippingPrice;
 
@@ -151,9 +193,6 @@ function Checkout() {
     }
   };
 
-  //initialize variables
-  const [fullName, setFullName] = useState(checkoutData.fullName || "");
-  const [address, setAddress] = useState(checkoutData.address || "");
   const [contactNumber, setContactNumber] = useState(
     checkoutData.contactNumber || ""
   );
@@ -161,6 +200,20 @@ function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState(
     checkoutData.paymentMethod || ""
   );
+
+  useEffect(() => {
+    setAddress(number + "," + lane + "," + city + "," + district);
+    console.log(address);
+    if (
+      district === "Kandy" ||
+      district === "Matale" ||
+      district === "Nuwara Eliya"
+    ) {
+      setShippingPrice(350);
+    } else {
+      setShippingPrice(500);
+    }
+  }, [number, lane, city, district]);
 
   useEffect(() => {
     if (!userInfo) {
@@ -309,11 +362,11 @@ function Checkout() {
         },
       };
     }
-    if (address.length === 0) {
+    if (number.length === 0 || city.length === 0 || district.length === 0) {
       checkoutErrors = {
         ...checkoutErrors,
         addressErrorMsg: {
-          message: "Please enter your Address",
+          message: "Please enter your Number or City or District",
           isVisible: true,
         },
       };
@@ -334,6 +387,14 @@ function Checkout() {
           isVisible: true,
         },
       };
+    } else if (contactNumber.length !== 10) {
+      checkoutErrors = {
+        ...checkoutErrors,
+        contactNumberErrorMsg: {
+          message: "Please enter 10 digits of your contact nymber",
+          isVisible: true,
+        },
+      };
     } else {
       checkoutErrors = {
         ...checkoutErrors,
@@ -349,6 +410,14 @@ function Checkout() {
         ...checkoutErrors,
         emailErrorMsg: {
           message: "Please enter your Email",
+          isVisible: true,
+        },
+      };
+    } else if (!validator.isEmail(email)) {
+      checkoutErrors = {
+        ...checkoutErrors,
+        emailErrorMsg: {
+          message: "Please enter valid Email",
           isVisible: true,
         },
       };
@@ -371,6 +440,14 @@ function Checkout() {
       checkoutErrors.emailErrorMsg.isVisible
     );
   };
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: 50 * 4.5 + 5,
+        width: 250,
+      },
+    },
+  };
 
   function renderFragments() {
     switch (activeStep) {
@@ -384,7 +461,7 @@ function Checkout() {
               mt={2}
               sx={{ mb: { xs: 5, lg: 1 } }}
             >
-              <Grid item xs={12} md={7}>
+              <Grid item xs={12} md={6}>
                 <Box sx={{ minHeight: STEPPER_HEIGHT }}>
                   <Grid container spacing={2} sx={{ mt: 1 }}>
                     <Grid item xs={12} lg={8}>
@@ -392,7 +469,6 @@ function Checkout() {
                       <TextField
                         sx={{
                           paddingLeft: "10px",
-                          mt: "0.5rem",
                           width: "95%",
                         }}
                         placeholder="Full Name"
@@ -421,21 +497,125 @@ function Checkout() {
 
                     <Grid item xs={12} lg={8}>
                       <Typography pl={1}>Address</Typography>
-                      <TextField
-                        fullWidth
+                      <Box display="flex">
+                        <Grid item xs={12} lg={3}>
+                          {" "}
+                          <TextField
+                            fullWidth
+                            sx={{
+                              paddingLeft: "10px",
+                              width: "95%",
+                            }}
+                            placeholder="No:"
+                            size="small"
+                            value={number}
+                            onChange={handleOnNumber}
+                            {...(checkoutError.addressErrorMsg.isVisible && {
+                              error: true,
+                            })}
+                          ></TextField>
+                        </Grid>
+                        <Grid item xs={12} lg={9}>
+                          <TextField
+                            fullWidth
+                            sx={{
+                              paddingLeft: "10px",
+                              width: "95%",
+                            }}
+                            placeholder="Lane:"
+                            size="small"
+                            value={lane}
+                            onChange={handleOnLane}
+                            {...(checkoutError.addressErrorMsg.isVisible && {
+                              error: true,
+                            })}
+                          ></TextField>
+                        </Grid>
+                      </Box>
+                      <Box display={"flex"} sx={{ mt: "0.5rem" }}>
+                        <Grid item xs={12} lg={9}>
+                          <TextField
+                            fullWidth
+                            sx={{
+                              paddingLeft: "10px",
+                              width: "95%",
+                            }}
+                            placeholder="City:"
+                            size="small"
+                            value={city}
+                            onChange={handleOnCity}
+                            {...(checkoutError.addressErrorMsg.isVisible && {
+                              error: true,
+                            })}
+                          ></TextField>
+                        </Grid>
+                        <Grid item xs={12} lg={9}>
+                          <Select
+                            sx={{
+                              ml: "5px",
+                              width: "95%",
+                            }}
+                            labelId="demo-select-small"
+                            id="demo-select-small"
+                            value={district}
+                            onChange={handleOnDistrict}
+                            {...(checkoutError.addressErrorMsg.isVisible && {
+                              error: true,
+                            })}
+                            size="small"
+                            MenuProps={MenuProps}
+                          >
+                            <MenuItem value={"Colombo"} selected>
+                              Colombo
+                            </MenuItem>
+                            <MenuItem value={"Gampaha"}>Gampaha</MenuItem>
+                            <MenuItem value={"Kalutara"}>Kalutara</MenuItem>
+                            <MenuItem value={"Kandy"}>Kandy</MenuItem>
+                            <MenuItem value={" Matale"}> Matale</MenuItem>
+                            <MenuItem value={"Nuwara Eliya"}>
+                              Nuwara Eliya
+                            </MenuItem>
+                            <MenuItem value={"Galle"}>Galle</MenuItem>
+                            <MenuItem value={"Matara"}>Matara</MenuItem>
+                            <MenuItem value={"Hambantota"}>Hambantota</MenuItem>
+                            <MenuItem value={"Jaffna"}>Jaffna</MenuItem>
+                            <MenuItem value={"Kilinochchi"}>
+                              Kilinochchi
+                            </MenuItem>
+                            <MenuItem value={"Mannar"}>Mannar</MenuItem>
+                            <MenuItem value={"Vavuniya"}>Vavuniya</MenuItem>
+                            <MenuItem value={"Mullaitivu"}>Mullaitivu</MenuItem>
+                            <MenuItem value={"Batticaloa"}>Batticaloa</MenuItem>
+                            <MenuItem value={"Ampara"}>Ampara</MenuItem>
+                            <MenuItem value={"Trincomalee"}>
+                              Trincomalee
+                            </MenuItem>
+                            <MenuItem value={"Kurunegala"}>Kurunegala</MenuItem>
+                            <MenuItem value={"Puttalam"}>Puttalam</MenuItem>
+                            <MenuItem value={"Anuradhapura"}>
+                              Anuradhapura
+                            </MenuItem>
+                            <MenuItem value={"Polonnaruwa"}>
+                              Polonnaruwa
+                            </MenuItem>
+                            <MenuItem value={"Badulla"}>Badulla</MenuItem>
+                            <MenuItem value={"Moneragala"}>Moneragala</MenuItem>
+                            <MenuItem value={"Ratnapura"}>Ratnapura</MenuItem>
+                            <MenuItem value={"Kegalle"}>Kegalle</MenuItem>
+                          </Select>
+                        </Grid>
+                      </Box>
+                      <Typography
                         sx={{
-                          paddingLeft: "10px",
-                          mt: "0.5rem",
+                          ml: "10px",
                           width: "95%",
                         }}
-                        placeholder="Address"
-                        size="small"
-                        value={address}
-                        onChange={handleOnAddress}
-                        {...(checkoutError.addressErrorMsg.isVisible && {
-                          error: true,
-                        })}
-                      ></TextField>
+                        color="primary"
+                        fontSize="0.8rem"
+                      >
+                        Shipping cost be changed based on the District
+                      </Typography>
+
                       <Typography
                         color="error"
                         fontSize="0.8rem"
@@ -456,7 +636,6 @@ function Checkout() {
                       <TextField
                         sx={{
                           paddingLeft: "10px",
-                          mt: "0.5rem",
                           width: "95%",
                         }}
                         placeholder="Contact Number"
@@ -489,7 +668,6 @@ function Checkout() {
                         fullWidth
                         sx={{
                           paddingLeft: "10px",
-                          mt: "0.5rem",
                           width: "95%",
                         }}
                         placeholder="Email"
@@ -518,8 +696,13 @@ function Checkout() {
                 </Box>
               </Grid>
               <Divider orientation="vertical" flexItem />
-
-              <CheckoutSummary items={bag.bagItems} />
+              <Grid item xs={12} md={0.5}></Grid>
+              <Grid item xs={12} md={5}>
+                <CheckoutSummary
+                  items={bag.bagItems}
+                  shippingPrice={shippingPrice}
+                />
+              </Grid>
             </Grid>
           </React.Fragment>
         );
@@ -533,7 +716,7 @@ function Checkout() {
               mt={2}
               sx={{ mb: { xs: 5, lg: 1 } }}
             >
-              <Grid item xs={12} md={7}>
+              <Grid item xs={12} md={6}>
                 <Box sx={{ minHeight: STEPPER_HEIGHT }}>
                   <FormControl>
                     <FormLabel id="demo-controlled-radio-buttons-group">
@@ -578,7 +761,13 @@ function Checkout() {
                 </Box>
               </Grid>
               <Divider orientation="vertical" flexItem />
-              <CheckoutSummary items={bag.bagItems} />
+              <Grid item xs={12} md={0.5}></Grid>
+              <Grid item xs={12} md={5}>
+                <CheckoutSummary
+                  items={bag.bagItems}
+                  shippingPrice={shippingPrice}
+                />
+              </Grid>
             </Grid>
           </React.Fragment>
         );
@@ -592,7 +781,7 @@ function Checkout() {
               mt={2}
               sx={{ mb: { xs: 5, lg: 1 } }}
             >
-              <Grid item xs={12} md={7}>
+              <Grid item xs={12} md={6}>
                 <Box
                   sx={{
                     minHeight: STEPPER_HEIGHT,
@@ -627,7 +816,13 @@ function Checkout() {
                 </Box>
               </Grid>
               <Divider orientation="vertical" flexItem />
-              <CheckoutSummary items={bag.bagItems} />
+              <Grid item xs={12} md={0.5}></Grid>
+              <Grid item xs={12} md={5}>
+                <CheckoutSummary
+                  items={bag.bagItems}
+                  shippingPrice={shippingPrice}
+                />
+              </Grid>
             </Grid>
           </React.Fragment>
         );

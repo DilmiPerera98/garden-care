@@ -8,7 +8,7 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import { FaEdit, FaPlus, FaTrashAlt } from "react-icons/fa";
-import { Box, Button, CardMedia } from "@mui/material";
+import { Box, Button, CardMedia, IconButton } from "@mui/material";
 import AddProduct from "./AddProduct";
 import { toast } from "react-toastify";
 import { Store } from "../../../store";
@@ -87,6 +87,9 @@ const headCells = [
 function ViewProductData() {
   //-------------------------------------
   const [isUpdate, setIsUpdate] = useState(false);
+  const [editId, setEditId] = useState("");
+  const [editProduct, setEditProduct] = useState({});
+
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const handleChangePage = (event, newPage) => {
@@ -101,9 +104,6 @@ function ViewProductData() {
   //addProductModal
   const [open, setOpen] = useState(false);
   const modalOpen = () => setOpen(true);
-
-  const [editId, setEditId] = useState("");
-  const [editProduct, setEditProduct] = useState({});
 
   //--------------------------------------------
   const { search } = useLocation();
@@ -127,8 +127,6 @@ function ViewProductData() {
 
   const { state } = useContext(Store);
   const { userInfo } = state;
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -252,7 +250,7 @@ function ViewProductData() {
                       />
                     </TableCell>
                     <TableCell align={"center"}>
-                      <Button>
+                      <IconButton sx={{ fontSize: "15px" }}>
                         <FaEdit
                           onClick={() => {
                             modalOpen();
@@ -261,14 +259,15 @@ function ViewProductData() {
                             setEditProduct(product);
                           }}
                         />
-                      </Button>
-                      <Button
+                      </IconButton>
+                      <IconButton
+                        sx={{ fontSize: "15px" }}
                         onClick={() => {
                           deleteHandler(product);
                         }}
                       >
                         <FaTrashAlt />
-                      </Button>
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 ))}

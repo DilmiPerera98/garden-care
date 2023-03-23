@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { Store } from "../../store";
 
 export default function ProtectedRoute({ children }) {

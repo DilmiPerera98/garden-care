@@ -4,12 +4,12 @@ function CheckoutSummary(props) {
   const { items } = props;
 
   const itemsPrice = items.reduce((a, c) => a + c.price * c.quantity, 0);
-  const shippingPrice = 350;
+  const shippingPrice = props.shippingPrice;
 
   const totalPrice = itemsPrice + shippingPrice;
 
   return (
-    <Grid item xs={12} md={4.8}>
+    <Grid item xs={12}>
       <Typography sx={{ fontSize: 20, mt: 1, mb: 1 }} textAlign="center">
         Summary
       </Typography>

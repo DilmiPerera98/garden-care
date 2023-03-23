@@ -8,6 +8,7 @@ import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/admin/Dashboard";
 import Product from "./pages/admin/Product";
 import Order from "./pages/admin/Order";
+import AdminOrder from "./pages/admin/AdminOrder";
 import AdminArticle from "./pages/admin/AdminArticle";
 import Report from "./pages/admin/Report";
 import Customer from "./pages/admin/Customer";
@@ -20,6 +21,7 @@ import OrderHistory from "./pages/OrderHistory";
 import Profile from "./pages/Profile";
 import ProtectedRoute from "./components/Routes/ProtectedRoute";
 import AdminRoute from "./components/Routes/AdminRoute";
+import AdminGuidence from "./pages/admin/AdminGuidence";
 
 function App() {
   return (
@@ -39,7 +41,7 @@ function App() {
           />
           <Route path="/" element={<Home />} />
           <Route path="/article" element={<Article />} />
-          <Route path="/readArticle" element={<ReadArticle />} />
+          <Route path="/readArticle/:_id" element={<ReadArticle />} />
           {/* <Route path="guidence/" element={<Guidence />} /> */}
           <Route path="/shop" element={<Shop />} />
           <Route
@@ -74,6 +76,14 @@ function App() {
           element={
             <AdminRoute>
               <Dashboard />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/guidence"
+          element={
+            <AdminRoute>
+              <AdminGuidence />
             </AdminRoute>
           }
         />
@@ -114,6 +124,14 @@ function App() {
           element={
             <AdminRoute>
               <Order />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/order/:id"
+          element={
+            <AdminRoute>
+              <AdminOrder />
             </AdminRoute>
           }
         />

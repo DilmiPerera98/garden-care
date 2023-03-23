@@ -14,6 +14,7 @@ import { Store } from "../store";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { getError } from "../utils";
+import validator from "validator";
 
 export default function SignIn() {
   const navigate = useNavigate();
@@ -25,6 +26,8 @@ export default function SignIn() {
   //submit handler
   const [email, setEmail] = useState("");
   const [password, setPassowrd] = useState("");
+  const { state, dispatch: ctxDispatch } = useContext(Store);
+  const { userInfo } = state;
 
   const handleOnChangeEmail = (event) => {
     setEmail(event.target.value);
@@ -42,9 +45,6 @@ export default function SignIn() {
     });
   };
 
-  const { state, dispatch: ctxDispatch } = useContext(Store);
-  const { userInfo } = state;
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     let isInValid = validateUserInput();
@@ -56,7 +56,7 @@ export default function SignIn() {
           password,
         });
         ctxDispatch({ type: "USER_SIGNIN", payload: data });
-        // localStorage.setItem("userInfo", JSON.stringify(data));
+        localStorage.setItem("userInfo", JSON.stringify(data));
         toast.success("Successfully sign In");
         navigate(redirect || "/");
       } catch (error) {
@@ -90,6 +90,14 @@ export default function SignIn() {
         ...userInfoErrors,
         emailErrorMsg: {
           message: "Please enter your email",
+          isVisible: true,
+        },
+      };
+    } else if (!validator.isEmail(email)) {
+      userInfoErrors = {
+        ...userInfoErrors,
+        emailErrorMsg: {
+          message: "Please enter valid email",
           isVisible: true,
         },
       };

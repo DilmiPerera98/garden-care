@@ -1,18 +1,23 @@
 import logoimg from "../../Resources/logo.png";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { MenuData } from "./MenuData";
 import { Link, Outlet } from "react-router-dom";
 import "./NavBarStyles.css";
 import { FaShoppingBag } from "react-icons/fa";
-import { Badge, IconButton } from "@mui/material";
+import { Badge, IconButton, Typography } from "@mui/material";
 import Bag from "../Modal/Bag";
 import { Store } from "../../store";
 import Profile from "../Menu/Profile";
+import GuidenceModal from "../Modal/GuidenceModal";
 
 function Navbar() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [gOpen, setGOpen] = useState(false);
   const handleOpen = () => {
     setOpen(true);
+  };
+  const handleGOpen = () => {
+    setGOpen(true);
   };
 
   const { state } = useContext(Store);
@@ -38,6 +43,20 @@ function Navbar() {
 
           <li>
             {userInfo ? (
+              userInfo.isAdmin === "false" ? (
+                <Link onClick={handleGOpen} className={"nav-links"}>
+                  Guidence
+                </Link>
+              ) : (
+                ""
+              )
+            ) : (
+              ""
+            )}
+          </li>
+
+          <li>
+            {userInfo ? (
               userInfo.isAdmin === "true" ? (
                 <Link to="/dashboard" className={"nav-links"}>
                   Dashboard
@@ -50,16 +69,20 @@ function Navbar() {
             )}
           </li>
 
-          <li color="white">
-            <IconButton color="inherit">
-              <Badge
-                badgeContent={bag.bagItems.reduce((a, c) => a + c.quantity, 0)}
-                color="primary"
-              >
+          {bag.bagItems.length > 0 && (
+            <li color="white">
+              <IconButton color="inherit">
                 <FaShoppingBag onClick={handleOpen} />
-              </Badge>
-            </IconButton>
-          </li>
+                <Badge
+                  badgeContent={bag.bagItems.reduce(
+                    (a, c) => a + c.quantity,
+                    0
+                  )}
+                  color="primary"
+                />
+              </IconButton>
+            </li>
+          )}
 
           <li>
             {userInfo ? (
@@ -73,6 +96,7 @@ function Navbar() {
         </ul>
       </nav>
       <Bag open={open} setOpen={setOpen} />
+      <GuidenceModal gOpen={gOpen} setGOpen={setGOpen} />
       <Outlet />
     </div>
   );

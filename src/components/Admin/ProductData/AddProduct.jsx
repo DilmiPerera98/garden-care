@@ -50,7 +50,7 @@ function AddProduct({ open, setOpen, editId, isUpdate, editProduct }) {
     setName("");
     setSlug("");
     setPrice("");
-    setImage("");
+    setImg("");
     setCategory("");
     setCountInStock("");
   }
@@ -69,31 +69,41 @@ function AddProduct({ open, setOpen, editId, isUpdate, editProduct }) {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [price, setPrice] = useState("");
-  const [image, setImage] = useState("");
+  const [img, setImg] = useState("");
   const [category, setCategory] = useState("");
   const [countInStock, setCountInStock] = useState("");
   //const [description, setDescription] = useState("");
 
-  /*   const createHandler = async () => {
+  const createHandler = async (e) => {
+    e.preventDefault();
     try {
       dispatch({ type: "CREATE_REQUEST" });
       const { data } = await axios.post(
         "/api/products",
-        {},
+        {
+          name,
+          slug,
+          price,
+          img,
+          category,
+          countInStock,
+          //description,
+        },
         {
           headers: { Authorization: `Bearer ${userInfo.token}` },
         }
       );
-      toast.success("product created successfully");
+
       dispatch({ type: "CREATE_SUCCESS" });
-      navigate(`/product`);
+      toast.success("product created successfully");
+      handleClose();
     } catch (err) {
       toast.error(getError(error));
       dispatch({
         type: "CREATE_FAIL",
       });
     }
-  }; */
+  };
 
   /* useEffect(() => {
     if (isUpdate) {
@@ -104,7 +114,7 @@ function AddProduct({ open, setOpen, editId, isUpdate, editProduct }) {
           setName(data.productName);
           setSlug(data.slug);
           setPrice(data.price);
-          setImage(data.image);
+          setImg(data.img);
           setCategory(data.category);
           setCountInStock(data.countInStock);
           //setDescription(data.description);
@@ -124,7 +134,7 @@ function AddProduct({ open, setOpen, editId, isUpdate, editProduct }) {
     setName(isUpdate ? editProduct.productName : name);
     setSlug(isUpdate ? editProduct.slug : slug);
     setPrice(isUpdate ? editProduct.price : price);
-    setImage(isUpdate ? editProduct.img : image);
+    setImg(isUpdate ? editProduct.img : img);
     setCategory(isUpdate ? editProduct.category : category);
     setCountInStock(isUpdate ? editProduct.countInStock : countInStock);
   }, [editProduct, setOpen, editId, isUpdate]);
@@ -140,7 +150,7 @@ function AddProduct({ open, setOpen, editId, isUpdate, editProduct }) {
           name,
           slug,
           price,
-          image,
+          img,
           category,
           countInStock,
           //description,
@@ -189,7 +199,7 @@ function AddProduct({ open, setOpen, editId, isUpdate, editProduct }) {
             ) : error ? (
               <Message variant="danger">{error}</Message>
             ) : ( */}
-            <form onSubmit={submitHandler}>
+            <form onSubmit={isUpdate ? submitHandler : createHandler}>
               <Box
                 sx={{
                   display: "flex",
@@ -227,6 +237,44 @@ function AddProduct({ open, setOpen, editId, isUpdate, editProduct }) {
                   size="small"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                ></TextField>
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  m: 1,
+                }}
+              >
+                <Typography pl={1} pt={1} sx={{ width: "20%" }}>
+                  Product Image
+                </Typography>
+                <TextField
+                  sx={{ paddingLeft: "10px", mt: "0.5rem", width: "75%" }}
+                  placeholder="Product Image"
+                  size="small"
+                  value={img}
+                  onChange={(e) => setImg(e.target.value)}
+                ></TextField>
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  m: 1,
+                }}
+              >
+                <Typography pl={1} pt={1} sx={{ width: "20%" }}>
+                  Product Slug
+                </Typography>
+                <TextField
+                  sx={{ paddingLeft: "10px", mt: "0.5rem", width: "75%" }}
+                  placeholder="Product Slug"
+                  size="small"
+                  value={slug}
+                  onChange={(e) => setSlug(e.target.value)}
                 ></TextField>
               </Box>
 

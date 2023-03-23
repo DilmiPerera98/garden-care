@@ -103,11 +103,11 @@ export default function OrderHistory() {
                       Rs.{order.totalPrice}.00
                     </TableCell>
                     <TableCell align="center">
-                      {order.isPaid ? order.paidAt.subString(0, 10) : "No"}
+                      {order.isPaid ? order.paidAt.substring(0, 10) : "No"}
                     </TableCell>
                     <TableCell align="center">
                       {order.isDelivered
-                        ? order.deliveredAt.subString(0, 10)
+                        ? order.deliveredAt.substring(0, 10)
                         : "No"}
                     </TableCell>
                     <TableCell align="center">

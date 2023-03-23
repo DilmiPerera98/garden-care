@@ -28,6 +28,7 @@ export default function Profile(props) {
     ctxDispatch({ type: "USER_SIGNOUT" });
     localStorage.removeItem("userInfo");
     localStorage.removeItem("checkoutData");
+    /*   localStorage.removeItem("bagItems"); */
 
     window.location.href = "/signin";
   };

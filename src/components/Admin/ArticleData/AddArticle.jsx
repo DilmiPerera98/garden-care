@@ -10,12 +10,118 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React from "react";
+import axios from "axios";
+import React, { useContext, useEffect, useReducer, useState } from "react";
+import { toast } from "react-toastify";
+import { Store } from "../../../store";
+import { getError } from "../../../utils";
 
-function AddArticle({ open, setOpen }) {
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_REQUEST":
+      return { ...state, loading: true };
+    case "FETCH_SUCCESS":
+      return { ...state, loading: false };
+    case "FETCH_FAIL":
+      return { ...state, loading: false, error: action.payload };
+    case "UPDATE_REQUEST":
+      return { ...state, loadingUpdate: true };
+    case "UPDATE_SUCCESS":
+      return { ...state, loadingUpdate: false };
+    case "UPDATE_FAIL":
+      return { ...state, loadingUpdate: false };
+    case "CREATE_REQUEST":
+      return { ...state, loadingCreate: true };
+    case "CREATE_SUCCESS":
+      return {
+        ...state,
+        loadingCreate: false,
+      };
+    case "CREATE_FAIL":
+      return { ...state, loadingCreate: false };
+    default:
+      return state;
+  }
+};
+
+function AddArticle({ open, setOpen, editId, isUpdate, editArticle }) {
   function handleClose() {
     setOpen(false);
+    setName("");
+    setImg("");
+    setDescription("");
   }
+
+  const { state } = useContext(Store);
+  const { userInfo } = state;
+  const [{ loading, error, loadingUpdate }, dispatch] = useReducer(reducer, {
+    loading: true,
+    error: "",
+  });
+
+  const [name, setName] = useState("");
+  const [img, setImg] = useState("");
+  const [description, setDescription] = useState("");
+
+  const createHandler = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch({ type: "CREATE_REQUEST" });
+      const { data } = await axios.post(
+        "/api/articles",
+        {
+          name,
+          img,
+          description,
+        },
+        {
+          headers: { Authorization: `Bearer ${userInfo.token}` },
+        }
+      );
+
+      dispatch({ type: "CREATE_SUCCESS" });
+      toast.success("Article created successfully");
+      handleClose();
+    } catch (err) {
+      toast.error(getError(error));
+      dispatch({
+        type: "CREATE_FAIL",
+      });
+    }
+  };
+
+  useEffect(() => {
+    setName(isUpdate ? editArticle.name : name);
+    setImg(isUpdate ? editArticle.img : img);
+    setDescription(isUpdate ? editArticle.description : description);
+  }, [editArticle, setOpen, editId, isUpdate]);
+
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch({ type: "UPDATE_REQUEST" });
+      await axios.put(
+        `/api/articles/${editId}`,
+        {
+          _id: editId,
+          name,
+          img,
+          description,
+        },
+        {
+          headers: { Authorization: `Bearer ${userInfo.token}` },
+        }
+      );
+      dispatch({
+        type: "UPDATE_SUCCESS",
+      });
+      toast.success("Article updated successfully");
+      handleClose();
+    } catch (err) {
+      toast.error(getError(err));
+      dispatch({ type: "UPDATE_FAIL" });
+    }
+  };
 
   return (
     <Modal open={open}>
@@ -38,114 +144,131 @@ function AddArticle({ open, setOpen }) {
               display="flex"
               justifyContent="center"
             >
-              Add new Article
+              {isUpdate ? "Update Article" : "Add Article"}
             </Typography>
 
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                m: 1,
-              }}
-            >
-              <Typography pl={1} pt={1} sx={{ width: "25%" }}>
-                Article Id
-              </Typography>
-              <TextField
-                sx={{ paddingLeft: "10px", mt: "0.5rem", width: "70%" }}
-                placeholder="Article Id"
-                size="small"
-              ></TextField>
-            </Box>
-
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                m: 1,
-              }}
-            >
-              <Typography pl={1} pt={1} sx={{ width: "25%" }}>
-                Article Type
-              </Typography>
-              <FormControl
-                sx={{ paddingLeft: "10px", mt: "0.5rem", width: "70%" }}
-              >
-                {/*  <InputLabel id="role">Role</InputLabel> */}
-                <Select size="small">
-                  <MenuItem value={"Student"}>Pots</MenuItem>
-                  <MenuItem value={"Lecturer"}>Plants</MenuItem>
-                  <MenuItem value={"Lecturer"}>Tools</MenuItem>
-                  <MenuItem value={"Lecturer"}>Fertilizer</MenuItem>
-                </Select>
-              </FormControl>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                m: 1,
-              }}
-            >
-              <Typography pl={1} pt={1} sx={{ width: "25%" }}>
-                Article Name
-              </Typography>
-              <FormControl
-                sx={{ paddingLeft: "10px", mt: "0.5rem", width: "70%" }}
-              >
-                {/*  <InputLabel id="role">Role</InputLabel> */}
-                <Select size="small">
-                  <MenuItem value={"Indoor Plants"}>Indoor Plants</MenuItem>
-                  <MenuItem value={"Outdoor Plants"}>Outdoor Plants</MenuItem>
-                  <MenuItem value={"Outdoor Plants"}>Plastic Pots</MenuItem>
-                  <MenuItem value={"Outdoor Plants"}>Clay Pots</MenuItem>
-                </Select>
-              </FormControl>
-            </Box>
-
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "end",
-                paddingRight: "27px",
-                paddingTop: "1rem",
-                marginTop: "0.2rem",
-              }}
-            >
-              <Button
-                variant="outlined"
+            <form onSubmit={isUpdate ? submitHandler : createHandler}>
+              <Box
                 sx={{
-                  ":hover": {
-                    bgcolor: "#A0D5C2",
-                    borderColor: "#A0D5C2",
-                  },
-                  color: "#24936B",
-                  marginRight: "0.5rem",
-                  mt: 3,
-                  mb: 2,
-                  borderColor: "#24936B",
-                }}
-                onClick={handleClose}
-              >
-                Close
-              </Button>
-              <Button
-                variant="contained"
-                sx={{
-                  ":hover": {
-                    bgcolor: "#A0D5C2",
-                  },
-                  mt: 3,
-                  mb: 2,
-                  backgroundColor: "#24936B",
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  m: 1,
                 }}
               >
-                Save
-              </Button>
-            </Box>
+                <Typography pl={1} pt={1} sx={{ width: "20%" }}>
+                  Article Id
+                </Typography>
+                <TextField
+                  sx={{ paddingLeft: "10px", mt: "0.5rem", width: "75%" }}
+                  placeholder="Product Id"
+                  size="small"
+                  value={isUpdate ? editId : ""}
+                  disabled
+                ></TextField>
+              </Box>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  m: 1,
+                }}
+              >
+                <Typography pl={1} pt={1} sx={{ width: "20%" }}>
+                  Article Name
+                </Typography>
+                <TextField
+                  sx={{ paddingLeft: "10px", mt: "0.5rem", width: "75%" }}
+                  placeholder="Article Name"
+                  size="small"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                ></TextField>
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  m: 1,
+                }}
+              >
+                <Typography pl={1} pt={1} sx={{ width: "20%" }}>
+                  Article Image
+                </Typography>
+                <TextField
+                  sx={{ paddingLeft: "10px", mt: "0.5rem", width: "75%" }}
+                  placeholder="Article Image"
+                  size="small"
+                  value={img}
+                  onChange={(e) => setImg(e.target.value)}
+                ></TextField>
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  m: 1,
+                }}
+              >
+                <Typography pl={1} pt={1} sx={{ width: "20%" }}>
+                  Description
+                </Typography>
+                <TextField
+                  sx={{ paddingLeft: "10px", mt: "0.5rem", width: "75%" }}
+                  placeholder="Description"
+                  size="small"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                ></TextField>
+              </Box>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "end",
+                  paddingRight: "27px",
+                  paddingTop: "1rem",
+                  marginTop: "0.2rem",
+                }}
+              >
+                <Button
+                  variant="outlined"
+                  sx={{
+                    ":hover": {
+                      bgcolor: "#A0D5C2",
+                      borderColor: "#A0D5C2",
+                    },
+                    color: "#24936B",
+                    marginRight: "0.5rem",
+                    mt: 3,
+                    mb: 2,
+                    borderColor: "#24936B",
+                  }}
+                  onClick={handleClose}
+                >
+                  Close
+                </Button>
+                <Button
+                  variant="contained"
+                  sx={{
+                    ":hover": {
+                      bgcolor: "#A0D5C2",
+                    },
+                    mt: 3,
+                    mb: 2,
+                    backgroundColor: "#24936B",
+                  }}
+                  type="submit"
+                >
+                  Save
+                </Button>
+              </Box>
+            </form>
+            {/* )} */}
           </CardContent>
         </Card>
       </Box>

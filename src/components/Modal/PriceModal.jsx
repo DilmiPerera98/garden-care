@@ -18,6 +18,8 @@ import { Store } from "../../store";
 import Loading from "../Loading";
 import Message from "../Message";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
+import ReviewModal from "./ReviewModal";
 
 const style = {
   position: "absolute",
@@ -97,81 +99,107 @@ function PriceModal({ open, setOpen, slug }) {
     });
   };
 
+  const [reviewOpen, setreviewOpen] = React.useState(false);
+
+  const handleReviewOpen = () => {
+    handleClose();
+    console.log("what" + reviewOpen);
+    setreviewOpen(true);
+  };
+
   return loading ? (
     <Loading />
   ) : error ? (
     <Message variant="error">{error}</Message>
   ) : (
-    <Modal
-      open={open}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Card sx={style}>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "end",
-          }}
-        >
-          <IconButton onClick={handleClose}>
-            <FaRegWindowClose />
-          </IconButton>
-        </Box>
-
-        <Box
-          sx={{
-            alignItems: "center",
-            display: "flex",
-          }}
-        >
-          <CardMedia
-            component="img"
-            image={product.img}
-            alt="green iguana"
-            sx={{ width: "16rem", height: "16rem" }}
-          />
-          <Box>
-            <Typography gutterBottom variant="h5" component="div">
-              Rs. {product.price}. 00
-            </Typography>
-
-            <Typography variant="body2" color="text.secondary">
-              {product.productName}
-            </Typography>
-
-            <Box sx={{ mb: 1, mt: 1 }}>
-              {product.countInStock > 0 ? (
-                <Chip label="Available" color="success" size="small" />
-              ) : (
-                <Chip label="Unavailable" color="error" size="small" />
-              )}
-            </Box>
-
-            <Rating
-              name="half-rating"
-              defaultValue={product.rating}
-              precision={0.5}
-            />
-            <Button
-              variant="contained"
-              sx={{
-                ":hover": {
-                  bgcolor: "#A0D5C2",
-                },
-                mt: 3,
-                mb: 2,
-                backgroundColor: "#24936B",
-              }}
-              disabled={product.countInStock === 0}
-              onClick={addtoBagHandler}
-            >
-              {product.countInStock === 0 ? "Out of Stock" : "Add To Bag"}
-            </Button>
+    <Box>
+      <Modal
+        open={open}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Card sx={style}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "end",
+            }}
+          >
+            <IconButton onClick={handleClose}>
+              <FaRegWindowClose />
+            </IconButton>
           </Box>
-        </Box>
-      </Card>
-    </Modal>
+
+          <Box
+            sx={{
+              alignItems: "center",
+              display: "flex",
+            }}
+          >
+            <CardMedia
+              component="img"
+              image={product.img}
+              alt="green iguana"
+              sx={{ width: "16rem", height: "16rem" }}
+            />
+            <Box
+              sx={{
+                minWidth: "200px",
+              }}
+            >
+              <Typography gutterBottom variant="h5" component="div">
+                Rs. {product.price}. 00
+              </Typography>
+
+              <Typography variant="body2" color="text.secondary">
+                {product.productName}
+              </Typography>
+
+              <Box sx={{ mt: 1 }}>
+                {product.countInStock > 0 ? (
+                  <Chip label="Available" color="success" size="small" />
+                ) : (
+                  <Chip label="Unavailable" color="error" size="small" />
+                )}
+              </Box>
+
+              <Button
+                variant="contained"
+                sx={{
+                  ":hover": {
+                    bgcolor: "#A0D5C2",
+                  },
+                  mt: 3,
+                  mb: 2,
+                  backgroundColor: "#24936B",
+                }}
+                disabled={product.countInStock === 0}
+                onClick={addtoBagHandler}
+              >
+                {product.countInStock === 0 ? "Out of Stock" : "Add To Bag"}
+              </Button>
+              <Rating
+                name="half-rating"
+                defaultValue={product.rating}
+                precision={0.5}
+                readOnly
+              />
+              <Button
+                sx={{ backgroundColor: "white", fontSize: "12px" }}
+                onClick={handleReviewOpen}
+              >
+                Add Your Review
+              </Button>
+            </Box>
+          </Box>
+        </Card>
+      </Modal>
+      <ReviewModal
+        reviewOpen={reviewOpen}
+        setreviewOpen={setreviewOpen}
+        slug={product.slug}
+      />
+    </Box>
   );
 }
 

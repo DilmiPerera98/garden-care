@@ -14,6 +14,8 @@ import { getError } from "../utils";
 import { useState } from "react";
 import { useContext } from "react";
 import { useEffect } from "react";
+import validator from "validator";
+
 /* import OtpModal from "../components/Modal/OtpModal"; */
 
 export default function SignUp() {
@@ -139,6 +141,14 @@ export default function SignUp() {
         ...signUpInfoErrors,
         emailErrorMsg: {
           message: "Please enter your email address",
+          isVisible: true,
+        },
+      };
+    } else if (!validator.isEmail(email)) {
+      signUpInfoErrors = {
+        ...signUpInfoErrors,
+        emailErrorMsg: {
+          message: "Please enter valid email address",
           isVisible: true,
         },
       };
