@@ -3,7 +3,9 @@ import {
   Button,
   Card,
   CardContent,
+  MenuItem,
   Modal,
+  Select,
   TextField,
   Typography,
 } from "@mui/material";
@@ -16,6 +18,7 @@ import { getError } from "../../../utils";
 import Loading from "../../Loading";
 import Message from "../../Message";
 
+//reducer function
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -45,6 +48,7 @@ const reducer = (state, action) => {
 };
 
 function AddProduct({ open, setOpen, editId, isUpdate, editProduct }) {
+  //handle Add product modal
   function handleClose() {
     setOpen(false);
     setName("");
@@ -53,11 +57,8 @@ function AddProduct({ open, setOpen, editId, isUpdate, editProduct }) {
     setImg("");
     setCategory("");
     setCountInStock("");
+    setDiscount("");
   }
-
-  const navigate = useNavigate();
-  /*  const params = useParams(); // /product/:id
-  const { id: productId } = params; */
 
   const { state } = useContext(Store);
   const { userInfo } = state;
@@ -66,79 +67,69 @@ function AddProduct({ open, setOpen, editId, isUpdate, editProduct }) {
     error: "",
   });
 
+  //initialize the variables
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [price, setPrice] = useState("");
   const [img, setImg] = useState("");
   const [category, setCategory] = useState("");
   const [countInStock, setCountInStock] = useState("");
+  const [discount, setDiscount] = useState("");
   //const [description, setDescription] = useState("");
 
-  const createHandler = async (e) => {
-    e.preventDefault();
-    try {
-      dispatch({ type: "CREATE_REQUEST" });
-      const { data } = await axios.post(
-        "/api/products",
-        {
-          name,
-          slug,
-          price,
-          img,
-          category,
-          countInStock,
-          //description,
-        },
-        {
-          headers: { Authorization: `Bearer ${userInfo.token}` },
-        }
-      );
-
-      dispatch({ type: "CREATE_SUCCESS" });
-      toast.success("product created successfully");
-      handleClose();
-    } catch (err) {
-      toast.error(getError(error));
-      dispatch({
-        type: "CREATE_FAIL",
-      });
-    }
+  const handleChange = (event) => {
+    setCategory(event.target.value);
   };
 
-  /* useEffect(() => {
-    if (isUpdate) {
-      const fetchData = async () => {
-        try {
-          dispatch({ type: "FETCH_REQUEST" });
-          const { data } = await axios.get(`/api/products/${editId}`);
-          setName(data.productName);
-          setSlug(data.slug);
-          setPrice(data.price);
-          setImg(data.img);
-          setCategory(data.category);
-          setCountInStock(data.countInStock);
-          //setDescription(data.description);
-          dispatch({ type: "FETCH_SUCCESS" });
-        } catch (err) {
-          dispatch({
-            type: "FETCH_FAIL",
-            payload: getError(err),
-          });
-        }
-      };
-      fetchData();
-    }
-  }, [editId, setOpen, isUpdate]); */
-
+  //show the exixsting data of the field
   useEffect(() => {
     setName(isUpdate ? editProduct.productName : name);
     setSlug(isUpdate ? editProduct.slug : slug);
     setPrice(isUpdate ? editProduct.price : price);
     setImg(isUpdate ? editProduct.img : img);
     setCategory(isUpdate ? editProduct.category : category);
+    setDiscount(isUpdate ? editProduct.discount : discount);
     setCountInStock(isUpdate ? editProduct.countInStock : countInStock);
   }, [editProduct, setOpen, editId, isUpdate]);
 
+  //handle create product function
+  const createHandler = async (e) => {
+    e.preventDefault();
+    let isInValid = validateUserInput();
+
+    if (!isInValid) {
+      try {
+        dispatch({ type: "CREATE_REQUEST" });
+        const { data } = await axios.post(
+          "/api/products",
+          {
+            name,
+            slug,
+            price,
+            img,
+            category,
+            countInStock,
+            discount,
+            //description,
+          },
+          {
+            headers: { Authorization: `Bearer ${userInfo.token}` },
+          }
+        );
+
+        dispatch({ type: "CREATE_SUCCESS" });
+        toast.success("product created successfully");
+        handleClose();
+      } catch (err) {
+        toast.error(getError(error));
+        dispatch({
+          type: "CREATE_FAIL",
+        });
+      }
+    }
+  };
+
+  //handle uddating the data
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
@@ -153,6 +144,7 @@ function AddProduct({ open, setOpen, editId, isUpdate, editProduct }) {
           img,
           category,
           countInStock,
+          discount,
           //description,
         },
         {
@@ -168,6 +160,158 @@ function AddProduct({ open, setOpen, editId, isUpdate, editProduct }) {
       toast.error(getError(err));
       dispatch({ type: "UPDATE_FAIL" });
     }
+  };
+
+  //----------error handling----
+  const [productInforError, setProductInforError] = useState({
+    nameErrorMsg: {
+      message: "",
+      isVisible: false,
+    },
+    imgErrorMsg: {
+      message: "",
+      isVisible: false,
+    },
+    slugErrorMsg: {
+      message: "",
+      isVisible: false,
+    },
+    priceErrorMsg: {
+      message: "",
+      isVisible: false,
+    },
+    countInStockErrorMsg: {
+      message: "",
+      isVisible: false,
+    },
+    discountErrorMsg: {
+      message: "",
+      isVisible: false,
+    },
+  });
+
+  const validateUserInput = () => {
+    let productInforErrors = productInforError;
+
+    if (name.length === 0) {
+      productInforErrors = {
+        ...productInforErrors,
+        nameErrorMsg: {
+          message: "*",
+          isVisible: true,
+        },
+      };
+    } else {
+      productInforErrors = {
+        ...productInforErrors,
+        nameErrorMsg: {
+          message: "",
+          isVisible: false,
+        },
+      };
+    }
+
+    if (slug.length === 0) {
+      productInforErrors = {
+        ...productInforErrors,
+        slugErrorMsg: {
+          message: "*",
+          isVisible: true,
+        },
+      };
+    } else {
+      productInforErrors = {
+        ...productInforErrors,
+        slugErrorMsg: {
+          message: "",
+          isVisible: false,
+        },
+      };
+    }
+
+    if (price.length === 0) {
+      productInforErrors = {
+        ...productInforErrors,
+        priceErrorMsg: {
+          message: "*",
+          isVisible: true,
+        },
+      };
+    } else {
+      productInforErrors = {
+        ...productInforErrors,
+        priceErrorMsg: {
+          message: "",
+          isVisible: false,
+        },
+      };
+    }
+
+    if (img.length === 0) {
+      productInforErrors = {
+        ...productInforErrors,
+        imgErrorMsg: {
+          message: "*",
+          isVisible: true,
+        },
+      };
+    } else {
+      productInforErrors = {
+        ...productInforErrors,
+        imgErrorMsg: {
+          message: "",
+          isVisible: false,
+        },
+      };
+    }
+
+    if (countInStock.length === 0) {
+      productInforErrors = {
+        ...productInforErrors,
+        countInStockErrorMsg: {
+          message: "*",
+          isVisible: true,
+        },
+      };
+    } else {
+      productInforErrors = {
+        ...productInforErrors,
+        countInStockErrorMsg: {
+          message: "",
+          isVisible: false,
+        },
+      };
+    }
+
+    if (discount.length === 0) {
+      productInforErrors = {
+        ...productInforErrors,
+        discountErrorMsg: {
+          message: "*",
+          isVisible: true,
+        },
+      };
+    } else {
+      productInforErrors = {
+        ...productInforErrors,
+        discountErrorMsg: {
+          message: "",
+          isVisible: false,
+        },
+      };
+    }
+
+    // setting all error messages found
+    setProductInforError(productInforErrors);
+    return (
+      productInforErrors.nameErrorMsg.isVisible ||
+      productInforErrors.slugErrorMsg.isVisible ||
+      productInforErrors.priceErrorMsg.isVisible ||
+      productInforErrors.imgErrorMsg.isVisible ||
+      productInforErrors.categoryErrorMsg.isVisible ||
+      productInforErrors.countInStockErrorMsg.isVisible ||
+      productInforErrors.discountErrorMsg.isVisible
+    );
   };
 
   return (
@@ -211,6 +355,7 @@ function AddProduct({ open, setOpen, editId, isUpdate, editProduct }) {
                 <Typography pl={1} pt={1} sx={{ width: "20%" }}>
                   Product Id
                 </Typography>
+
                 <TextField
                   sx={{ paddingLeft: "10px", mt: "0.5rem", width: "75%" }}
                   placeholder="Product Id"
@@ -236,9 +381,32 @@ function AddProduct({ open, setOpen, editId, isUpdate, editProduct }) {
                   placeholder="Product Name"
                   size="small"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  {...(productInforError.nameErrorMsg.isVisible && {
+                    error: true,
+                  })}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    setProductInforError({
+                      ...productInforError,
+                      nameErrorMsg: { isVisible: false },
+                    });
+                  }}
                 ></TextField>
+                <Typography
+                  color="error"
+                  fontSize="1.2rem"
+                  sx={{
+                    visibility: `${
+                      productInforError.nameErrorMsg.isVisible
+                        ? "unset"
+                        : "hidden"
+                    }`,
+                  }}
+                >
+                  {productInforError.nameErrorMsg.message}
+                </Typography>
               </Box>
+
               <Box
                 sx={{
                   display: "flex",
@@ -255,9 +423,32 @@ function AddProduct({ open, setOpen, editId, isUpdate, editProduct }) {
                   placeholder="Product Image"
                   size="small"
                   value={img}
-                  onChange={(e) => setImg(e.target.value)}
+                  {...(productInforError.imgErrorMsg.isVisible && {
+                    error: true,
+                  })}
+                  onChange={(e) => {
+                    setImg(e.target.value);
+                    setProductInforError({
+                      ...productInforError,
+                      imgErrorMsg: { isVisible: false },
+                    });
+                  }}
                 ></TextField>
+                <Typography
+                  color="error"
+                  fontSize="1.2rem"
+                  sx={{
+                    visibility: `${
+                      productInforError.imgErrorMsg.isVisible
+                        ? "unset"
+                        : "hidden"
+                    }`,
+                  }}
+                >
+                  {productInforError.imgErrorMsg.message}
+                </Typography>
               </Box>
+
               <Box
                 sx={{
                   display: "flex",
@@ -274,8 +465,30 @@ function AddProduct({ open, setOpen, editId, isUpdate, editProduct }) {
                   placeholder="Product Slug"
                   size="small"
                   value={slug}
-                  onChange={(e) => setSlug(e.target.value)}
+                  {...(productInforError.slugErrorMsg.isVisible && {
+                    error: true,
+                  })}
+                  onChange={(e) => {
+                    setSlug(e.target.value);
+                    setProductInforError({
+                      ...productInforError,
+                      slugErrorMsg: { isVisible: false },
+                    });
+                  }}
                 ></TextField>
+                <Typography
+                  color="error"
+                  fontSize="1.2rem"
+                  sx={{
+                    visibility: `${
+                      productInforError.slugErrorMsg.isVisible
+                        ? "unset"
+                        : "hidden"
+                    }`,
+                  }}
+                >
+                  {productInforError.slugErrorMsg.message}
+                </Typography>
               </Box>
 
               <Box
@@ -289,13 +502,20 @@ function AddProduct({ open, setOpen, editId, isUpdate, editProduct }) {
                 <Typography pl={1} pt={1} sx={{ width: "20%" }}>
                   Category
                 </Typography>
-                <TextField
-                  sx={{ paddingLeft: "10px", mt: "0.5rem", width: "75%" }}
-                  placeholder="Category"
-                  size="small"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                ></TextField>
+                <Box sx={{ paddingLeft: "10px", width: "75%" }}>
+                  <Select
+                    defaultValue={"Plant"}
+                    sx={{ mt: "0.5rem", width: "100%" }}
+                    placeholder="Category"
+                    size="small"
+                    value={category}
+                    onChange={handleChange}
+                  >
+                    <MenuItem value={"Plant"}>Plant</MenuItem>
+                    <MenuItem value={"Pot"}>Pot</MenuItem>
+                    <MenuItem value={"Fertilizer"}>Fertilizer</MenuItem>
+                  </Select>
+                </Box>
               </Box>
 
               <Box
@@ -314,8 +534,30 @@ function AddProduct({ open, setOpen, editId, isUpdate, editProduct }) {
                   placeholder="Price"
                   size="small"
                   value={price}
-                  onChange={(e) => setPrice(e.target.value)}
+                  {...(productInforError.priceErrorMsg.isVisible && {
+                    error: true,
+                  })}
+                  onChange={(e) => {
+                    setPrice(e.target.value);
+                    setProductInforError({
+                      ...productInforError,
+                      priceErrorMsg: { isVisible: false },
+                    });
+                  }}
                 ></TextField>
+                <Typography
+                  color="error"
+                  fontSize="1.2rem"
+                  sx={{
+                    visibility: `${
+                      productInforError.priceErrorMsg.isVisible
+                        ? "unset"
+                        : "hidden"
+                    }`,
+                  }}
+                >
+                  {productInforError.priceErrorMsg.message}
+                </Typography>
               </Box>
 
               <Box
@@ -334,10 +576,73 @@ function AddProduct({ open, setOpen, editId, isUpdate, editProduct }) {
                   placeholder="Quantity"
                   size="small"
                   value={countInStock}
-                  onChange={(e) => setCountInStock(e.target.value)}
+                  {...(productInforError.countInStockErrorMsg.isVisible && {
+                    error: true,
+                  })}
+                  onChange={(e) => {
+                    setCountInStock(e.target.value);
+                    setProductInforError({
+                      ...productInforError,
+                      countInStockErrorMsg: { isVisible: false },
+                    });
+                  }}
                 ></TextField>
+                <Typography
+                  color="error"
+                  fontSize="1.2rem"
+                  sx={{
+                    visibility: `${
+                      productInforError.countInStockErrorMsg.isVisible
+                        ? "unset"
+                        : "hidden"
+                    }`,
+                  }}
+                >
+                  {productInforError.countInStockErrorMsg.message}
+                </Typography>
               </Box>
 
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  m: 1,
+                }}
+              >
+                <Typography pl={1} pt={1} sx={{ width: "20%" }}>
+                  Discount
+                </Typography>
+                <TextField
+                  sx={{ paddingLeft: "10px", mt: "0.5rem", width: "75%" }}
+                  placeholder="Discount"
+                  size="small"
+                  value={discount}
+                  {...(productInforError.discountErrorMsg.isVisible && {
+                    error: true,
+                  })}
+                  onChange={(e) => {
+                    setDiscount(e.target.value);
+                    setProductInforError({
+                      ...productInforError,
+                      discountErrorMsg: { isVisible: false },
+                    });
+                  }}
+                ></TextField>
+                <Typography
+                  color="error"
+                  fontSize="1.2rem"
+                  sx={{
+                    visibility: `${
+                      productInforError.discountErrorMsg.isVisible
+                        ? "unset"
+                        : "hidden"
+                    }`,
+                  }}
+                >
+                  {productInforError.discountErrorMsg.message}
+                </Typography>
+              </Box>
               <Box
                 sx={{
                   display: "flex",
@@ -355,6 +660,21 @@ function AddProduct({ open, setOpen, editId, isUpdate, editProduct }) {
                   size="small"
                 ></TextField>
               </Box>
+
+              <Typography
+                color="error"
+                fontSize="0.8rem"
+                sx={{
+                  visibility: `${
+                    productInforError.discountErrorMsg.isVisible ||
+                    productInforError.nameErrorMsg.isVisible
+                      ? "unset"
+                      : "hidden"
+                  }`,
+                }}
+              >
+                * Mandotory fields can not be empty
+              </Typography>
 
               <Box
                 sx={{

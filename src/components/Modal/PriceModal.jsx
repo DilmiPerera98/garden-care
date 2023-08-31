@@ -33,6 +33,7 @@ const style = {
   p: 3,
 };
 
+//reducer function
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_Request":
@@ -46,13 +47,14 @@ const reducer = (state, action) => {
   }
 };
 
-function PriceModal({ open, setOpen, slug }) {
+function PriceModal({ open, setOpen, slug, productPrice }) {
   const [{ loading, error, product }, dispatch] = useReducer(reducer, {
     product: [],
     loading: true,
     error: "",
   });
 
+  //fetch data from the back end based on the unique slug
   useEffect(() => {
     const fetchData = async () => {
       dispatch({ type: "FETCH_Request" });
@@ -62,8 +64,6 @@ function PriceModal({ open, setOpen, slug }) {
       } catch (error) {
         dispatch({ type: "FETCH_FAIL", payload: error.message });
       }
-
-      //setProducts(result.data);
     };
     fetchData();
   }, [slug]);
@@ -78,7 +78,6 @@ function PriceModal({ open, setOpen, slug }) {
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { bag } = state;
 
-  /* console.log(bag); */
   const addtoBagHandler = async () => {
     handleClose();
     //check whether product exist
@@ -95,10 +94,11 @@ function PriceModal({ open, setOpen, slug }) {
 
     ctxDispatch({
       type: "BAG_ADD_ITEM",
-      payload: { ...product, quantity },
+      payload: { ...product, quantity, productPrice },
     });
   };
 
+  //handle review modal and details
   const [reviewOpen, setreviewOpen] = React.useState(false);
 
   const handleReviewOpen = () => {
@@ -147,9 +147,32 @@ function PriceModal({ open, setOpen, slug }) {
                 minWidth: "200px",
               }}
             >
-              <Typography gutterBottom variant="h5" component="div">
+              {/* <Typography gutterBottom variant="h5" component="div">
                 Rs. {product.price}. 00
-              </Typography>
+              </Typography> */}
+              {product.discount === 0 ? (
+                <Typography
+                  gutterBottom
+                  variant="h6"
+                  component="div"
+                  sx={{ color: product.discount === 0 ? "" : "red" }}
+                >
+                  Rs. {product.price}.00{" "}
+                </Typography>
+              ) : (
+                <Typography gutterBottom variant="h6" component="div">
+                  <s> Rs. {product.price}.00 </s>
+                  <Typography
+                    variant="h7"
+                    component="div"
+                    sx={{ color: product.discount === 0 ? "" : "red" }}
+                  >
+                    &nbsp;Rs.
+                    {productPrice}
+                    .00
+                  </Typography>
+                </Typography>
+              )}
 
               <Typography variant="body2" color="text.secondary">
                 {product.productName}

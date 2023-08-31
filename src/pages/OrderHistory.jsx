@@ -21,6 +21,7 @@ import Message from "../components/Message";
 import { Store } from "../store";
 import { getError } from "../utils";
 
+//reducer function
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -44,6 +45,7 @@ export default function OrderHistory() {
     error: "",
   });
 
+  //fetch the relavent user's order history
   useEffect(() => {
     const fetchData = async () => {
       dispatch({ type: "FETCH_REQUEST" });
@@ -59,6 +61,7 @@ export default function OrderHistory() {
     fetchData();
   }, [userInfo]);
 
+  //handling page
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 

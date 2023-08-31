@@ -18,6 +18,7 @@ import { getError } from "../../../utils";
 import Loading from "../../Loading";
 import Message from "../../Message";
 
+//reducer function
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -50,6 +51,7 @@ const reducer = (state, action) => {
   }
 };
 
+//Table column headers
 const headCells = [
   {
     id: "articleId",
@@ -81,10 +83,16 @@ function ViewArticleData() {
 
   //old ones
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  //AddAricleModal
+
+  //handle AddAricleModal
   const [open, setOpen] = useState(false);
   const modalOpen = () => setOpen(true);
 
+  const { search } = useLocation();
+  const sp = new URLSearchParams(search);
+
+  //Handling page number
+  const [page, setPage] = React.useState(1);
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -94,9 +102,6 @@ function ViewArticleData() {
     setPage(0);
   };
 
-  const { search } = useLocation();
-  const sp = new URLSearchParams(search);
-  const [page, setPage] = React.useState(1);
   const [
     {
       loading,
@@ -116,6 +121,7 @@ function ViewArticleData() {
   const { state } = useContext(Store);
   const { userInfo } = state;
 
+  //fetching the data from back end
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -134,11 +140,13 @@ function ViewArticleData() {
     }
   }, [page, userInfo, successDelete, open]);
 
+  //Handle the add or edit modal
   const createHandler = async () => {
     modalOpen();
     setIsUpdate(false);
   };
 
+  //handle the delete button
   const deleteHandler = async (article) => {
     if (window.confirm("Are you sure to delete?")) {
       try {
@@ -196,11 +204,7 @@ function ViewArticleData() {
               <TableHead>
                 <TableRow>
                   {headCells.map((column) => (
-                    <TableCell
-                      key={column.id}
-                      align={column.align}
-                      /*  style={{ minWidth: column.minWidth }} */
-                    >
+                    <TableCell key={column.id} align={column.align}>
                       {column.label}
                     </TableCell>
                   ))}

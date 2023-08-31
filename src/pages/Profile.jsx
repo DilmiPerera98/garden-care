@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { Store } from "../store";
 import { getError } from "../utils";
 
+//reducer function
 const reducer = (state, action) => {
   switch (action.type) {
     case "UPDATE_REQUEST":
@@ -27,6 +28,7 @@ export default function Profile() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { userInfo } = state;
 
+  //initilazing variables and handling
   const [name, setName] = useState(userInfo.name);
   const [email, setEmail] = useState(userInfo.email);
   const [password, setPassowrd] = useState("");
@@ -49,6 +51,7 @@ export default function Profile() {
     loadingUpdate: false,
   });
 
+  //updating profile
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {

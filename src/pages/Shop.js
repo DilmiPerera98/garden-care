@@ -4,6 +4,7 @@ import axios from "axios";
 import {
   Button,
   Grid,
+  IconButton,
   Menu,
   MenuItem,
   TextField,
@@ -18,6 +19,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getError } from "../utils";
 
+//reducer function
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_Request":
@@ -39,6 +41,7 @@ const reducer = (state, action) => {
 };
 
 export default function Shop() {
+  //serach product handler
   const [searchQuery, setSearchQueary] = useState("");
   const { search } = useLocation();
   const sp = new URLSearchParams(search);
@@ -66,11 +69,11 @@ export default function Shop() {
       } catch (error) {
         dispatch({ type: "FETCH_FAIL", payload: getError(error) });
       }
-      //setProducts(result.data);
     };
     fetchData();
   }, [category, error, order, page, price, query]);
 
+  //Filter product based on the category
   const [categories, setCategories] = useState([]);
   useEffect(() => {
     const fetchCategories = async () => {
@@ -84,6 +87,7 @@ export default function Shop() {
     fetchCategories();
   }, [dispatch]);
 
+  //filetr product based on a particular requirement
   const getFilterUrl = (filter) => {
     const filterPage = filter.page || page;
     const filterCategory = filter.category || category;
@@ -93,7 +97,7 @@ export default function Shop() {
     return `/shop?category=${filterCategory}&query=${filterQuery}&price=${filterPrice}&order=${filterOrder}&page=${filterPage}`;
   };
 
-  //dropdown handle
+  //-------------------dropdown handle-----------------
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -271,12 +275,14 @@ export default function Shop() {
       >
         {[...Array(pages).keys()].map((x) => (
           <Link key={x + 1} className="mx-1" to={getFilterUrl({ page: x + 1 })}>
-            <Button
+            <IconButton
               className={Number(page) === x + 1 ? "text-bold" : ""}
               variant="light"
+              size="small"
+              sx={{ margin: "5px" }}
             >
               {x + 1}
-            </Button>
+            </IconButton>
           </Link>
         ))}
       </Grid>

@@ -39,6 +39,7 @@ const style = {
   p: 3,
 };
 
+//reducer function
 const reducer = (state, action) => {
   switch (action.type) {
     case "REFRESH_PRODUCT":
@@ -69,6 +70,7 @@ function ReviewModal({ reviewOpen, setreviewOpen, slug }) {
       error: "",
     });
 
+  //fetch data from the back end
   useEffect(() => {
     const fetchData = async () => {
       dispatch({ type: "FETCH_Request" });
@@ -78,12 +80,11 @@ function ReviewModal({ reviewOpen, setreviewOpen, slug }) {
       } catch (error) {
         dispatch({ type: "FETCH_FAIL", payload: error.message });
       }
-
-      //setProducts(result.data);
     };
     fetchData();
   }, [slug]);
 
+  //handle review modal
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => {
     setOpen(true);
@@ -93,15 +94,11 @@ function ReviewModal({ reviewOpen, setreviewOpen, slug }) {
   //closereview modal
   const handlereviewClose = () => {
     setreviewOpen(false);
-    //handleOpen();
   };
-
-  //handle add to bag
 
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { userInfo } = state;
 
-  /* console.log(bag); */
   const [rate, setRate] = useState(0);
   const [comment, setComment] = useState("");
 
@@ -124,6 +121,7 @@ function ReviewModal({ reviewOpen, setreviewOpen, slug }) {
     console.log("rate is " + rate);
   };
 
+  //submit review
   const submitHandler = async (event) => {
     event.preventDefault();
     if (!comment || !rate) {

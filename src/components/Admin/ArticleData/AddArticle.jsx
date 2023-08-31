@@ -16,6 +16,7 @@ import { toast } from "react-toastify";
 import { Store } from "../../../store";
 import { getError } from "../../../utils";
 
+//reducer function for fetching, Creating , Updating
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -45,6 +46,7 @@ const reducer = (state, action) => {
 };
 
 function AddArticle({ open, setOpen, editId, isUpdate, editArticle }) {
+  //colsing the add, edit modal
   function handleClose() {
     setOpen(false);
     setName("");
@@ -59,10 +61,19 @@ function AddArticle({ open, setOpen, editId, isUpdate, editArticle }) {
     error: "",
   });
 
+  //initializing the variables
   const [name, setName] = useState("");
   const [img, setImg] = useState("");
   const [description, setDescription] = useState("");
 
+  //Viewable data in the create or update modal
+  useEffect(() => {
+    setName(isUpdate ? editArticle.name : name);
+    setImg(isUpdate ? editArticle.img : img);
+    setDescription(isUpdate ? editArticle.description : description);
+  }, [editArticle, setOpen, editId, isUpdate]);
+
+  //Creating the article first time
   const createHandler = async (e) => {
     e.preventDefault();
     try {
@@ -90,12 +101,7 @@ function AddArticle({ open, setOpen, editId, isUpdate, editArticle }) {
     }
   };
 
-  useEffect(() => {
-    setName(isUpdate ? editArticle.name : name);
-    setImg(isUpdate ? editArticle.img : img);
-    setDescription(isUpdate ? editArticle.description : description);
-  }, [editArticle, setOpen, editId, isUpdate]);
-
+  //updating or editing the article
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
@@ -161,7 +167,7 @@ function AddArticle({ open, setOpen, editId, isUpdate, editArticle }) {
                 </Typography>
                 <TextField
                   sx={{ paddingLeft: "10px", mt: "0.5rem", width: "75%" }}
-                  placeholder="Product Id"
+                  placeholder="Article Id"
                   size="small"
                   value={isUpdate ? editId : ""}
                   disabled

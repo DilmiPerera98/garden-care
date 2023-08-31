@@ -31,6 +31,7 @@ function BagProduct(props) {
     });
   };
 
+  //---------------------bagRemoveHandler-----------------
   const removeItemHandler = (bagproduct) => {
     ctxDispatch({ type: "CART_REMOVE_ITEM", payload: bagproduct });
   };

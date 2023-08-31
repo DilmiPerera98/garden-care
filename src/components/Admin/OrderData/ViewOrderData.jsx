@@ -18,6 +18,7 @@ import Loading from "../../Loading";
 import Message from "../../Message";
 import { useNavigate } from "react-router-dom";
 
+//reducer function
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -50,6 +51,7 @@ const reducer = (state, action) => {
   }
 };
 
+//table column headers
 const headCells = [
   {
     id: "orderId",
@@ -84,12 +86,9 @@ const headCells = [
 ];
 
 function ViewOrderData() {
-  const [isUpdate, setIsUpdate] = useState(false);
-  const [editId, setEditId] = useState("");
-  const [editorder, setEditorder] = useState({});
-
   const navigate = useNavigate();
 
+  //handling page numbers
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -102,7 +101,7 @@ function ViewOrderData() {
     setPage(0);
   };
 
-  //addorderModal
+  //handle addorderModal
   const [open, setOpen] = useState(false);
   const modalOpen = () => setOpen(true);
 
@@ -125,6 +124,7 @@ function ViewOrderData() {
   const { state } = useContext(Store);
   const { userInfo } = state;
 
+  //fetching data from the back end
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -143,6 +143,7 @@ function ViewOrderData() {
     }
   }, [page, userInfo, successDelete, open]);
 
+  //delete handler
   const deleteHandler = async (order) => {
     if (window.confirm("Are you sure to delete?")) {
       try {
@@ -166,7 +167,6 @@ function ViewOrderData() {
         display: "flex",
         width: "100%",
         justifyContent: "flex-end",
-        mt: 5,
       }}
     >
       {loadingCreate && <Loading></Loading>}
@@ -238,16 +238,6 @@ function ViewOrderData() {
                           }}
                         />
                       </IconButton>
-                      {/* <IconButton sx={{ fontSize: "15px" }}>
-                        <FaEdit
-                          onClick={() => {
-                            modalOpen();
-                            setEditId(order._id);
-                            setIsUpdate(true);
-                            setEditorder(order);
-                          }}
-                        />
-                      </IconButton> */}
                       <IconButton sx={{ fontSize: "15px" }}>
                         <FaTrashAlt
                           onClick={() => {

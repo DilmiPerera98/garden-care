@@ -29,7 +29,7 @@ function CategorySales(props) {
           plotOptions: {
             pie: {
               donut: {
-                size: "50%",
+                size: "60%",
               },
             },
           },

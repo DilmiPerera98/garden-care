@@ -5,9 +5,9 @@ function CheckoutSummary(props) {
 
   const itemsPrice = items.reduce((a, c) => a + c.price * c.quantity, 0);
   const shippingPrice = props.shippingPrice;
+  const additionalPrice = props.additionalPrice;
 
-  const totalPrice = itemsPrice + shippingPrice;
-
+  const totalPrice = itemsPrice + shippingPrice + additionalPrice;
   return (
     <Grid item xs={12}>
       <Typography sx={{ fontSize: 20, mt: 1, mb: 1 }} textAlign="center">
@@ -71,6 +71,14 @@ function CheckoutSummary(props) {
           </Typography>
           <Typography sx={{ display: "flex", justifyItems: "end" }}>
             Rs. {shippingPrice}.00
+          </Typography>
+        </Box>
+        <Box sx={{ display: "flex", alignContent: "center" }}>
+          <Typography sx={{ display: "flex", flexGrow: 1 }}>
+            Additional Price
+          </Typography>
+          <Typography sx={{ display: "flex", justifyItems: "end" }}>
+            Rs. {additionalPrice === 0 ? 0 : 150}.00
           </Typography>
         </Box>
         <Box sx={{ mt: 3, display: "flex", alignContent: "center" }}>

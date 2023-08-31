@@ -1,5 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Averia+Sans+Libre:wght@300&display=swap");
-@import url('https://fonts.googleapis.com/css2?family=Averia+Sans+Libre:wght@300&family=Lobster+Two:wght@700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Averia+Sans+Libre:wght@300&family=Lobster+Two:wght@700&display=swap");
 
 /* code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
@@ -9,6 +9,10 @@
 img {
   height: 100%;
   width: 100%;
+}
+
+.topic {
+  font-size: 5rem;
 }
 
 .topic {

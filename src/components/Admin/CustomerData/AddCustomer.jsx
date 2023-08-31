@@ -20,6 +20,7 @@ import { Store } from "../../../store";
 import { getError } from "../../../utils";
 import Loading from "../../Loading";
 
+//reducer function
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -48,14 +49,16 @@ function AddCustomer({ open, setOpen, editId }) {
   const { state } = useContext(Store);
   const { userInfo } = state;
 
-  const params = useParams();
-  const { id: userId } = params;
+  // const params = useParams();
+  // const { id: userId } = params;
   const navigate = useNavigate();
 
+  //initialize the variable
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [isAdmin, setIsAdmin] = useState("false");
 
+  //fetching the data from the back end
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -81,6 +84,7 @@ function AddCustomer({ open, setOpen, editId }) {
     fetchData();
   }, [editId, userInfo]);
 
+  //updating the edited data
   const submitHandler = async (e) => {
     e.preventDefault();
     try {

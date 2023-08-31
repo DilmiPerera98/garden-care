@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Grid, Typography } from "@mui/material";
+import { Box, Button, Divider, Grid, Paper, Typography } from "@mui/material";
 import { Container } from "@mui/system";
 import Axios from "axios";
 import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
@@ -16,6 +16,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import html2pdf from "html2pdf.js";
 
+//reducer function
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -61,6 +62,8 @@ const reducer = (state, action) => {
 export default function Order() {
   const { state } = useContext(Store);
   const { userInfo } = state;
+
+  var additionalPrice = 0;
   //reducer for orderDeatails
   const [
     {
@@ -93,9 +96,9 @@ export default function Order() {
 
     html2pdf(element, {
       margin: [50, 10, 10, 10],
-      filename: "DietType.pdf",
+      filename: order._id + ".pdf",
       image: {
-        type: "png",
+        type: "jpg",
         quality: 0.99,
       },
       html2canvas: {
@@ -111,6 +114,7 @@ export default function Order() {
     });
   }
 
+  //creating an order
   function createOrder(data, actions) {
     return actions.order
       .create({
@@ -124,6 +128,7 @@ export default function Order() {
         return orderId;
       });
   }
+  //paying the order
   function onApprove(data, actions) {
     return actions.order.capture().then(async function (details) {
       try {
@@ -147,6 +152,7 @@ export default function Order() {
   }
   const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
 
+  //fetching th order based on order id
   useEffect(() => {
     const fetchOrder = async () => {
       try {
@@ -207,6 +213,11 @@ export default function Order() {
     successSent,
   ]);
 
+  if (order.moisture === "High") {
+    additionalPrice = 150;
+  }
+
+  //update delivered order
   async function deliverOrderHandler() {
     try {
       dispatch({ type: "DELIVER_REQUEST" });
@@ -223,6 +234,7 @@ export default function Order() {
     }
   }
 
+  //update sent orders
   async function sentOrderHandler() {
     try {
       dispatch({ type: "SENT_REQUEST" });
@@ -261,27 +273,40 @@ export default function Order() {
                   <Box sx={{ minHeight: "200" }}>
                     <Box>
                       <Box sx={{ mb: 1, width: "40vw" }}>
-                        <Typography sx={{ fontSize: 25, mt: 1, mb: 1 }}>
-                          <u>Shipping Details</u>
-                        </Typography>
-                        <Typography sx={{ fontSize: 20 }}>
-                          <strong>Order Id: {orderId}</strong>
-                        </Typography>
-                        <Typography>
-                          <strong>Name: </strong> {order.checkoutData.fullName}
-                        </Typography>
-                        <Typography>
-                          <strong>Address: </strong>{" "}
-                          {order.checkoutData.address}
-                        </Typography>
-                        <Typography>
-                          <strong>Contact Number: </strong>{" "}
-                          {order.checkoutData.contactNumber}
-                        </Typography>
-                        <Typography>
-                          <strong>Payment Method: </strong>{" "}
-                          {order.paymentMethod}
-                        </Typography>
+                        <Paper
+                          variant="outlined"
+                          sx={{ mb: 1, width: "30vw", p: "10px" }}
+                        >
+                          <Typography sx={{ fontSize: 25, mt: 1, mb: 1 }}>
+                            <u>Shipping Details</u>
+                          </Typography>
+                          <Typography sx={{ fontSize: 20 }}>
+                            <strong>Order Id: {orderId}</strong>
+                          </Typography>
+                          <Typography>
+                            <strong>Name: </strong>{" "}
+                            {order.checkoutData.fullName}
+                          </Typography>
+                          <Typography>
+                            <strong>Address: </strong>{" "}
+                            {order.checkoutData.address}
+                          </Typography>
+                          <Typography>
+                            <strong>Contact Number: </strong>{" "}
+                            {order.checkoutData.contactNumber}
+                          </Typography>
+                          <Typography>
+                            <strong>Payment Method: </strong>{" "}
+                            {order.paymentMethod}
+                          </Typography>
+                          <Typography>
+                            <strong>Moisture Protection: </strong>{" "}
+                            {order.moisture}
+                          </Typography>
+                          <Typography>
+                            <strong>Additional Notes: </strong> {order.notes}
+                          </Typography>
+                        </Paper>
                         <Box sx={{ mt: 3 }}>
                           {order.isDelivered ? (
                             <Message variant="success">
@@ -319,11 +344,16 @@ export default function Order() {
             <Divider orientation="vertical" flexItem sx={{ p: "1px" }} />
             <Grid item xs={12} md={0.5}></Grid>
             <Grid item xs={12} md={5}>
-              <CheckoutSummary
-                items={order.orderItems}
-                shippingPrice={Number(order.shippingPrice)}
-              />
-
+              <Paper
+                variant="outlined"
+                sx={{ mb: 1, width: "30vw", p: "10px" }}
+              >
+                <CheckoutSummary
+                  items={order.orderItems}
+                  shippingPrice={Number(order.shippingPrice)}
+                  additionalPrice={additionalPrice}
+                />
+              </Paper>
               <Box sx={{ mt: "2rem" }}>
                 {!order.isPaid && (
                   <Box>
@@ -376,9 +406,29 @@ export default function Order() {
           </Grid>
         </Box>
       )}
-      <Button type="button" onClick={handleOnDownload}>
-        Download
-      </Button>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "end",
+        }}
+      >
+        <Button
+          type="button"
+          onClick={handleOnDownload}
+          sx={{
+            ":hover": {
+              bgcolor: "#A0D5C2",
+            },
+            mt: 3,
+            mb: 2,
+            backgroundColor: "#24936B",
+            color: "white",
+            fontSize: "12px",
+          }}
+        >
+          Download pdf
+        </Button>
+      </Box>
     </Container>
   );
 }

@@ -7,6 +7,7 @@ import ArticleCard from "../components/cards/ArticleCard";
 import Loading from "../components/Loading";
 import Message from "../components/Message";
 
+//reducer function
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_Request":
@@ -32,6 +33,8 @@ export default function Home() {
   });
 
   const navigate = useNavigate();
+
+  //fetch the data from the back end
   useEffect(() => {
     const fetchData = async () => {
       dispatch({ type: "FETCH_REQUEST" });

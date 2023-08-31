@@ -28,6 +28,7 @@ function App() {
     <div className="App">
       <ToastContainer position="bottom-center" limit={1} />
       <Routes>
+        {/* ------------------------------guest user------------------------------- */}
         <Route path="" element={<Navbar />}>
           <Route path="/signIn" element={<SignIn />} />
           <Route path="/signUp" element={<SignUp />} />
@@ -42,7 +43,6 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/article" element={<Article />} />
           <Route path="/readArticle/:_id" element={<ReadArticle />} />
-          {/* <Route path="guidence/" element={<Guidence />} /> */}
           <Route path="/shop" element={<Shop />} />
           <Route
             path="/checkout"

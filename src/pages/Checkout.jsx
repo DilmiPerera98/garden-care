@@ -33,6 +33,7 @@ import { Store } from "../store";
 import { getError } from "../utils";
 import validator from "validator";
 
+//reducer function
 const reducer = (state, action) => {
   switch (action.type) {
     case "CREATE_REQUEST":
@@ -63,6 +64,9 @@ function Checkout() {
       fullNameErrorMsg: { isVisible: false },
     });
   };
+  const handleOnNotes = (event) => {
+    setNotes(event.target.value);
+  };
   const handleOnNumber = (event) => {
     setNumber(event.target.value);
     setcheckoutError({
@@ -92,13 +96,7 @@ function Checkout() {
       addressErrorMsg: { isVisible: false },
     });
   };
-  // const handleOnVillage = (event) => {
-  //   setVillage(event.target.value);
-  //   setcheckoutError({
-  //     ...checkoutError,
-  //     addressErrorMsg: { isVisible: false },
-  //   });
-  // };
+
   const handleOnContactNumber = (event) => {
     setContactNumber(event.target.value);
     setcheckoutError({
@@ -126,6 +124,7 @@ function Checkout() {
 
   const bag = state.bag;
 
+  //save the user details for the checkout
   async function saveData() {
     ctxDispatch({
       type: "SAVE_CHECKOUT",
@@ -151,18 +150,26 @@ function Checkout() {
 
   //initialize variables
   const [shippingPrice, setShippingPrice] = useState(350);
+  const [additionalPrice, setAdditionalPrice] = useState(0);
   const [fullName, setFullName] = useState(checkoutData.fullName || "");
   const [number, setNumber] = useState("");
   const [lane, setLane] = useState("");
   const [address, setAddress] = useState(checkoutData.address || "");
   const [city, setCity] = useState("");
   const [district, setDistrict] = useState("");
+  const [moisture, setMoisture] = useState("normal");
+  const [notes, setNotes] = useState("");
   // const [village, setVillage] = useState(checkoutData.village || "");
+
+  const handleMoisture = (event) => {
+    setMoisture(event.target.value);
+    console.log(moisture);
+  };
 
   //place order
   const itemsPrice = bag.bagItems.reduce((a, c) => a + c.price * c.quantity, 0);
 
-  const totalPrice = itemsPrice + shippingPrice;
+  const totalPrice = itemsPrice + shippingPrice + additionalPrice;
 
   const placeOrder = async () => {
     try {
@@ -176,6 +183,8 @@ function Checkout() {
           itemsPrice: itemsPrice,
           shippingPrice: shippingPrice,
           totalPrice: totalPrice,
+          moisture: moisture,
+          notes: notes,
         },
         {
           headers: {
@@ -201,6 +210,7 @@ function Checkout() {
     checkoutData.paymentMethod || ""
   );
 
+  //handle address
   useEffect(() => {
     setAddress(number + "," + lane + "," + city + "," + district);
     console.log(address);
@@ -215,13 +225,22 @@ function Checkout() {
     }
   }, [number, lane, city, district]);
 
+  //handle moisture
+  useEffect(() => {
+    if (moisture === "High") {
+      setAdditionalPrice(150);
+    } else {
+      setAdditionalPrice(0);
+    }
+  }, [moisture, additionalPrice]);
+
   useEffect(() => {
     if (!userInfo) {
       navigate("/signin?redirect=checkout");
     }
   }, [userInfo, navigate]);
 
-  //stepper handle
+  //--------------------stepper handle-----------------------------
   const location = useLocation();
   const STEPPER_HEIGHT = "50vh";
 
@@ -294,6 +313,7 @@ function Checkout() {
   };
 
   const theme = useTheme();
+  //------------------------------------------------------------------------------
 
   //---------validation-----------
 
@@ -387,6 +407,14 @@ function Checkout() {
           isVisible: true,
         },
       };
+    } else if (/^[a-zA-Z]+$/.test(contactNumber)) {
+      checkoutErrors = {
+        ...checkoutErrors,
+        contactNumberErrorMsg: {
+          message: "The contact number can not contain characters",
+          isVisible: true,
+        },
+      };
     } else if (contactNumber.length !== 10) {
       checkoutErrors = {
         ...checkoutErrors,
@@ -458,14 +486,16 @@ function Checkout() {
               container
               display={"flex"}
               gap={1}
-              mt={2}
+              mt={1}
               sx={{ mb: { xs: 5, lg: 1 } }}
             >
               <Grid item xs={12} md={6}>
                 <Box sx={{ minHeight: STEPPER_HEIGHT }}>
-                  <Grid container spacing={2} sx={{ mt: 1 }}>
+                  <Grid container spacing={2}>
                     <Grid item xs={12} lg={8}>
-                      <Typography pl={1}>Full Name</Typography>
+                      <Typography pl={1} fontSize="0.9rem">
+                        Full Name
+                      </Typography>
                       <TextField
                         sx={{
                           paddingLeft: "10px",
@@ -482,7 +512,8 @@ function Checkout() {
                       ></TextField>
                       <Typography
                         color="error"
-                        fontSize="0.8rem"
+                        fontSize="0.7rem"
+                        height="1px"
                         sx={{
                           visibility: `${
                             checkoutError.fullNameErrorMsg.isVisible
@@ -496,7 +527,22 @@ function Checkout() {
                     </Grid>
 
                     <Grid item xs={12} lg={8}>
-                      <Typography pl={1}>Address</Typography>
+                      <Box display="flex">
+                        <Typography pl={1} fontSize="0.9rem">
+                          Address
+                        </Typography>{" "}
+                        <Typography
+                          sx={{
+                            ml: "10px",
+                            width: "95%",
+                          }}
+                          color="primary"
+                          fontSize="0.7rem"
+                        >
+                          (Shipping cost be changed based on the location)
+                        </Typography>
+                      </Box>
+
                       <Box display="flex">
                         <Grid item xs={12} lg={3}>
                           {" "}
@@ -606,19 +652,9 @@ function Checkout() {
                         </Grid>
                       </Box>
                       <Typography
-                        sx={{
-                          ml: "10px",
-                          width: "95%",
-                        }}
-                        color="primary"
-                        fontSize="0.8rem"
-                      >
-                        Shipping cost be changed based on the District
-                      </Typography>
-
-                      <Typography
                         color="error"
-                        fontSize="0.8rem"
+                        fontSize="0.7rem"
+                        height="1px"
                         sx={{
                           visibility: `${
                             checkoutError.addressErrorMsg.isVisible
@@ -632,7 +668,9 @@ function Checkout() {
                     </Grid>
 
                     <Grid item xs={12} lg={8}>
-                      <Typography pl={1}>Contact Number</Typography>
+                      <Typography paddingLeft={"10px"} fontSize="0.9rem">
+                        Contact Number
+                      </Typography>
                       <TextField
                         sx={{
                           paddingLeft: "10px",
@@ -649,7 +687,8 @@ function Checkout() {
                       ></TextField>
                       <Typography
                         color="error"
-                        fontSize="0.8rem"
+                        fontSize="0.7rem"
+                        height="1px"
                         sx={{
                           visibility: `${
                             checkoutError.contactNumberErrorMsg.isVisible
@@ -663,7 +702,9 @@ function Checkout() {
                     </Grid>
 
                     <Grid item xs={12} lg={8}>
-                      <Typography pl={1}>Email</Typography>
+                      <Typography pl={1} fontSize="0.9rem">
+                        Email
+                      </Typography>
                       <TextField
                         fullWidth
                         sx={{
@@ -680,7 +721,8 @@ function Checkout() {
                       ></TextField>
                       <Typography
                         color="error"
-                        fontSize="0.8rem"
+                        fontSize="0.7rem"
+                        height="1px"
                         sx={{
                           visibility: `${
                             checkoutError.emailErrorMsg.isVisible
@@ -692,16 +734,74 @@ function Checkout() {
                         {checkoutError.emailErrorMsg.message}.
                       </Typography>
                     </Grid>
+
+                    <Grid item xs={12} lg={8}>
+                      <Box display="flex">
+                        <Typography pl={1} fontSize="0.9rem">
+                          Moisture Protection
+                        </Typography>
+                        <Typography
+                          sx={{
+                            ml: "10px",
+                            width: "61%",
+                          }}
+                          color="primary"
+                          fontSize="0.7rem"
+                          height="1px"
+                        >
+                          ( Additional charge will be added for "Heigh")
+                        </Typography>
+                      </Box>
+                      <FormControl sx={{ margin: "0", paddingLeft: "10px" }}>
+                        <RadioGroup
+                          row
+                          aria-labelledby="demo-row-radio-buttons-group-label"
+                          name="row-radio-buttons-group"
+                          value={moisture}
+                          onChange={handleMoisture}
+                        >
+                          <FormControlLabel
+                            value="Normal"
+                            control={<Radio size="small" />}
+                            label="Normal"
+                            defaultValue
+                          />
+                          <FormControlLabel
+                            value="High"
+                            control={<Radio size="small" />}
+                            label="High"
+                          />
+                        </RadioGroup>
+                      </FormControl>
+                      <TextField
+                        id="outlined-multiline-static"
+                        multiline
+                        rows={2}
+                        size="small"
+                        placeholder="Additional Notes"
+                        onChange={handleOnNotes}
+                        sx={{
+                          paddingLeft: "10px",
+                          width: "95%",
+                        }}
+                      />
+                    </Grid>
                   </Grid>
                 </Box>
               </Grid>
               <Divider orientation="vertical" flexItem />
               <Grid item xs={12} md={0.5}></Grid>
               <Grid item xs={12} md={5}>
-                <CheckoutSummary
-                  items={bag.bagItems}
-                  shippingPrice={shippingPrice}
-                />
+                <Paper
+                  variant="outlined"
+                  sx={{ mb: 1, width: "30vw", p: "10px" }}
+                >
+                  <CheckoutSummary
+                    items={bag.bagItems}
+                    shippingPrice={shippingPrice}
+                    additionalPrice={additionalPrice}
+                  />
+                </Paper>
               </Grid>
             </Grid>
           </React.Fragment>
@@ -763,10 +863,16 @@ function Checkout() {
               <Divider orientation="vertical" flexItem />
               <Grid item xs={12} md={0.5}></Grid>
               <Grid item xs={12} md={5}>
-                <CheckoutSummary
-                  items={bag.bagItems}
-                  shippingPrice={shippingPrice}
-                />
+                <Paper
+                  variant="outlined"
+                  sx={{ mb: 1, width: "30vw", p: "10px" }}
+                >
+                  <CheckoutSummary
+                    items={bag.bagItems}
+                    shippingPrice={shippingPrice}
+                    additionalPrice={additionalPrice}
+                  />
+                </Paper>
               </Grid>
             </Grid>
           </React.Fragment>
@@ -811,6 +917,12 @@ function Checkout() {
                         <strong>Payment Method: </strong>{" "}
                         {bag.checkoutData.paymentMethod}
                       </Typography>
+                      <Typography>
+                        <strong>Moisture Protection: </strong> {moisture}
+                      </Typography>
+                      <Typography>
+                        <strong>Additional Notes: </strong> {notes}
+                      </Typography>
                     </Paper>
                   </Grid>
                 </Box>
@@ -818,10 +930,16 @@ function Checkout() {
               <Divider orientation="vertical" flexItem />
               <Grid item xs={12} md={0.5}></Grid>
               <Grid item xs={12} md={5}>
-                <CheckoutSummary
-                  items={bag.bagItems}
-                  shippingPrice={shippingPrice}
-                />
+                <Paper
+                  variant="outlined"
+                  sx={{ mb: 1, width: "30vw", p: "10px" }}
+                >
+                  <CheckoutSummary
+                    items={bag.bagItems}
+                    shippingPrice={shippingPrice}
+                    additionalPrice={additionalPrice}
+                  />
+                </Paper>
               </Grid>
             </Grid>
           </React.Fragment>

@@ -16,8 +16,6 @@ import { useContext } from "react";
 import { useEffect } from "react";
 import validator from "validator";
 
-/* import OtpModal from "../components/Modal/OtpModal"; */
-
 export default function SignUp() {
   const navigate = useNavigate();
 
@@ -25,7 +23,7 @@ export default function SignUp() {
   const redirectInUrl = new URLSearchParams(serach).get("redirect");
   const redirect = redirectInUrl ? redirectInUrl : "/";
 
-  //submit handler
+  //-------initialize variable and handle those--------
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassowrd] = useState("");
@@ -63,7 +61,9 @@ export default function SignUp() {
 
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { userInfo } = state;
+  //-------------------------------------------------------
 
+  //submit handler
   const handleSubmit = async (event) => {
     event.preventDefault();
     const isvalidate = validatesignUpInput();
@@ -80,7 +80,6 @@ export default function SignUp() {
           localStorage.setItem("userInfo", JSON.stringify(data));
           toast.success("Successfully sign Up");
           navigate(redirect || "/signin");
-          /* navigate("/signin"); */
         } catch (error) {
           toast.error(getError(error));
         }
@@ -96,7 +95,7 @@ export default function SignUp() {
     }
   }, [navigate, redirect, userInfo]);
 
-  //----------------validation------
+  //-----------------------------------validation-----------------------------
   const [signUpInfoError, setsignUpInfoError] = useState({
     nameErrorMsg: {
       message: "",
@@ -223,6 +222,7 @@ export default function SignUp() {
       signUpInfoErrors.cPasswordErrorMsg.isVisible
     );
   };
+  //---------------------------------------------------------------------------
 
   return (
     <div align="center" alignItems="center">

@@ -1,9 +1,11 @@
-import { Box, Button, Grid } from "@mui/material";
+import { Box, Button, Grid, Paper, TextField, Typography } from "@mui/material";
 import { useContext, useEffect, useRef, useState } from "react";
 import socketIOClient from "socket.io-client";
 import { useSelector } from "react-redux";
 import Message from "./../Message.jsx";
-import { Store } from "../../store.js";
+import { Store } from "../../store";
+import { grey } from "@mui/material/colors";
+import { FaPaperPlane } from "react-icons/fa";
 
 let allUsers = [];
 let allMessages = [];
@@ -16,71 +18,70 @@ const ENDPOINT =
 function GuidenceData() {
   const [selectedUser, setSelectedUser] = useState("");
   const [socket, setSocket] = useState(null);
-  const uiMessageRef = useRef(null);
+  const uiMessagesRef = useRef(null);
   const [messageBody, setMessageBody] = useState("");
   const [messages, setMessages] = useState([]);
   const [users, setUsers] = useState([]);
-  //   const userSignin = useSelector((state) => state.USER_SIGNIN);
-  //   const { userInfo } = userSignin;
+  // const userSignin = useSelector((state) => state.userSignin);
+  // const { userInfo } = userSignin;
 
-  const { state, dispatch: ctxDispatch } = useContext(Store);
+  const { state } = useContext(Store);
   const { userInfo } = state;
+  console.log(userInfo);
 
   useEffect(() => {
-    if (uiMessageRef.current) {
-      uiMessageRef.current.scrollBy({
-        top: uiMessageRef.current.clientHeight,
+    if (uiMessagesRef.current) {
+      uiMessagesRef.current.scrollBy({
+        top: uiMessagesRef.current.clientHeight,
         left: 0,
         behavior: "smooth",
       });
+    }
 
-      if (!socket) {
-        const sk = socketIOClient(ENDPOINT);
-        setSocket(sk);
+    if (!socket) {
+      const sk = socketIOClient(ENDPOINT);
+      setSocket(sk);
 
-        sk.emit("onLogin", {
-          _id: userInfo._id,
-          name: userInfo.name,
-          isAdmin: userInfo.isAdmin,
-        });
-        sk.on("message", (data) => {
-          if (allSelectedUser._id === data._id) {
-            allMessages = [...allMessages, data];
-          } else {
-            const existUser = allUsers.find((user) => user._id === data._id);
-            if (existUser) {
-              allUsers = allUsers.map((user) =>
-                user._id === existUser._id ? { ...user, unread: true } : user
-              );
-              setUsers(allUsers);
-            }
-          }
-          setMessages(allMessages);
-        });
-        sk.on("updateUser", (updatedUser) => {
-          const existUser = allUsers.find(
-            (user) => user._id === updatedUser._id
-          );
+      sk.emit("onLogin", {
+        _id: userInfo._id,
+        name: userInfo.name,
+        isAdmin: userInfo.isAdmin,
+      });
+      sk.on("message", (data) => {
+        if (allSelectedUser._id === data._id) {
+          allMessages = [...allMessages, data];
+        } else {
+          const existUser = allUsers.find((user) => user._id === data._id);
           if (existUser) {
             allUsers = allUsers.map((user) =>
-              user._id === existUser._id ? updatedUser : user
+              user._id === existUser._id ? { ...user, unread: true } : user
             );
             setUsers(allUsers);
-          } else {
-            allUsers = [...allUsers, updatedUser];
-            setUsers(allUsers);
           }
-        });
-
-        sk.on("listUsers", (updatedUsers) => {
-          allUsers = updatedUsers;
+        }
+        setMessages(allMessages);
+      });
+      sk.on("updateUser", (updatedUser) => {
+        const existUser = allUsers.find((user) => user._id === updatedUser._id);
+        if (existUser) {
+          allUsers = allUsers.map((user) =>
+            user._id === existUser._id ? updatedUser : user
+          );
           setUsers(allUsers);
-        });
-        sk.on("selectUser", (user) => {
-          allMessages = user.messages;
-          setMessages(allMessages);
-        });
-      }
+        } else {
+          allUsers = [...allUsers, updatedUser];
+          setUsers(allUsers);
+        }
+      });
+
+      sk.on("listUsers", (updatedUsers) => {
+        allUsers = updatedUsers;
+        setUsers(allUsers);
+      });
+      sk.on("selectUser", (user) => {
+        allMessages = user.messages;
+        setMessages(allMessages);
+      });
     }
   }, [messages, socket, users]);
 
@@ -120,57 +121,97 @@ function GuidenceData() {
     }
   };
 
+  console.log(messages);
+
   return (
     <Box>
       <Grid container spacing={2}>
         <Grid item xs={4}>
-          {users.filter((x) => x._id !== userInfo._id).length === 0 && (
-            <Message>No Online User Found</Message>
-          )}
-          <ul>
-            {users
-              .filter((x) => x._id !== userInfo._id)
-              .map((user) => (
-                <li
-                  key={user._id}
-                  className={user._id === selectUser._id ? " selected" : " "}
-                >
-                  <Button onClick={() => selectUser(user)}>{user.name}</Button>
-                  <span
+          <Box>
+            {users.filter((x) => x._id !== userInfo._id).length === 0 && (
+              <Message>No Online User Found</Message>
+            )}
+          </Box>
+          <Box sx={{ height: "560px", width: "200px", background: "#EEEEEE" }}>
+            <ul>
+              {users
+                .filter((x) => x._id !== userInfo._id)
+                .map((user) => (
+                  <Typography
+                    key={user._id}
                     className={
-                      user.unread
-                        ? "unread"
-                        : user.online
-                        ? "online"
-                        : "offline"
+                      user._id === selectedUser._id ? " selected" : " "
                     }
-                  ></span>
-                </li>
-              ))}
-          </ul>
+                  >
+                    <Button onClick={() => selectUser(user)}>
+                      {user.name}
+                    </Button>
+                    <span
+                      className={
+                        user.unread
+                          ? "unread"
+                          : user.online
+                          ? "online"
+                          : "offline"
+                      }
+                    ></span>
+                  </Typography>
+                ))}
+            </ul>
+          </Box>
         </Grid>
         <Grid item xs={8}>
-          <strong>Chat with {selectedUser.name}</strong>
-          <ul ref={uiMessageRef}>
-            {messages.length === 0 && <li>No Message</li>}
-            {messages.map((msg, index) => (
-              <li key={index}>
-                <strong>{`${msg.name}: `}</strong>
-                {msg.body}
-              </li>
-            ))}
-          </ul>
-          <Box>
-            <form onSubmit={submitHandler}>
-              <input
-                value={messageBody}
-                onChange={(e) => setMessageBody(e.target.value)}
-                type="text"
-                placeholder="type Message"
-              />
-              <Button type="submit">Send</Button>
-            </form>
-          </Box>
+          {!selectedUser._id ? (
+            <Message>Select a user to start chat</Message>
+          ) : (
+            <Box>
+              <Box sx={{ m: "20px" }}>
+                <Typography fontSize={25}>
+                  <strong>Chat with {selectedUser.name}</strong>
+                </Typography>
+              </Box>
+              <Paper
+                variant="outlined"
+                sx={{ mb: 1, width: "50vw", p: "10px", height: "440px" }}
+              >
+                <Box>
+                  <ul ref={uiMessagesRef}>
+                    {messages.length === 0 && <li>No Message</li>}
+                    {messages.map((msg, index) => (
+                      <Typography key={index}>
+                        <strong>{`${msg.name}: `}</strong>
+                        {msg.body}
+                      </Typography>
+                    ))}
+                  </ul>
+                </Box>
+              </Paper>
+              <Box
+                display="flex"
+                alignContent="center"
+                sx={{ width: "50vw", m: "0" }}
+              >
+                <form onSubmit={submitHandler}>
+                  <TextField
+                    id="outlined-multiline-static"
+                    multiline
+                    rows={1}
+                    value={messageBody}
+                    onChange={(e) => setMessageBody(e.target.value)}
+                    placeholder="type Message"
+                    sx={{ width: "700px" }}
+                  />
+                  <Button
+                    display="flex"
+                    type="submit"
+                    sx={{ width: "30px", height: "60px" }}
+                  >
+                    <FaPaperPlane fontSize="20px" />
+                  </Button>
+                </form>
+              </Box>
+            </Box>
+          )}
         </Grid>
       </Grid>
     </Box>

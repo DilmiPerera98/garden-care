@@ -18,6 +18,7 @@ import { getError } from "../../../utils";
 import Loading from "../../Loading";
 import Message from "../../Message";
 
+//reducer function
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -50,6 +51,7 @@ const reducer = (state, action) => {
   }
 };
 
+//column headers of the table
 const headCells = [
   {
     id: "Name",
@@ -72,6 +74,11 @@ const headCells = [
     align: "center",
   },
   {
+    id: "discount",
+    label: " Discount",
+    align: "center",
+  },
+  {
     id: "image",
     label: " Image",
     align: "center",
@@ -90,6 +97,7 @@ function ViewProductData() {
   const [editId, setEditId] = useState("");
   const [editProduct, setEditProduct] = useState({});
 
+  //handle page numbers
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const handleChangePage = (event, newPage) => {
@@ -108,7 +116,7 @@ function ViewProductData() {
   //--------------------------------------------
   const { search } = useLocation();
   const sp = new URLSearchParams(search);
-  const [page, setPage] = React.useState(1);
+  const [page, setPage] = React.useState(10);
   const [
     {
       loading,
@@ -128,6 +136,7 @@ function ViewProductData() {
   const { state } = useContext(Store);
   const { userInfo } = state;
 
+  //fetch data from the backend
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -146,11 +155,21 @@ function ViewProductData() {
     }
   }, [page, userInfo, successDelete, open]);
 
+  //create handler
   const createHandler = async () => {
     modalOpen();
     setIsUpdate(false);
   };
 
+  //edit handler
+  const editHandler = async (product) => {
+    modalOpen();
+    setEditId(product._id);
+    setIsUpdate(true);
+    setEditProduct(product);
+  };
+
+  //delete handler
   const deleteHandler = async (product) => {
     if (window.confirm("Are you sure to delete?")) {
       try {
@@ -231,6 +250,7 @@ function ViewProductData() {
                     </TableCell>
                     <TableCell align={"center"}>{product.category}</TableCell>
                     <TableCell align={"center"}>{product.price}</TableCell>
+
                     <TableCell
                       align={"center"}
                       sx={{ color: product.countInStock === 0 ? "red" : "" }}
@@ -240,12 +260,18 @@ function ViewProductData() {
                         : product.countInStock}
                     </TableCell>
                     <TableCell
+                      align={"center"}
+                      sx={{ color: product.discount === 0 ? "" : "blue" }}
+                    >
+                      {product.discount}
+                    </TableCell>
+                    <TableCell
                       sx={{ display: "flex", justifyContent: "center" }}
                     >
                       <CardMedia
                         component="img"
                         image={product.img}
-                        alt="green iguana"
+                        alt={product.img}
                         sx={{ width: "2rem", height: "2rem" }}
                       />
                     </TableCell>
@@ -253,10 +279,7 @@ function ViewProductData() {
                       <IconButton sx={{ fontSize: "15px" }}>
                         <FaEdit
                           onClick={() => {
-                            modalOpen();
-                            setEditId(product._id);
-                            setIsUpdate(true);
-                            setEditProduct(product);
+                            editHandler(product);
                           }}
                         />
                       </IconButton>

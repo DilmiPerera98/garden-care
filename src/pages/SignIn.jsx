@@ -23,7 +23,7 @@ export default function SignIn() {
   const redirectInUrl = new URLSearchParams(serach).get("redirect");
   const redirect = redirectInUrl ? redirectInUrl : "/";
 
-  //submit handler
+  //initialze the variable and handle those
   const [email, setEmail] = useState("");
   const [password, setPassowrd] = useState("");
   const { state, dispatch: ctxDispatch } = useContext(Store);
@@ -45,6 +45,7 @@ export default function SignIn() {
     });
   };
 
+  //submit handler
   const handleSubmit = async (event) => {
     event.preventDefault();
     let isInValid = validateUserInput();
@@ -71,7 +72,7 @@ export default function SignIn() {
     }
   }, [navigate, redirect, userInfo]);
 
-  //----------error----
+  //----------error handling----
   const [userInfoError, setUserInfoError] = useState({
     emailErrorMsg: {
       message: "",
@@ -198,10 +199,6 @@ export default function SignIn() {
               >
                 {userInfoError.passwordErrorMsg.message}.
               </Typography>
-              {/* <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              /> */}
               <Button
                 fullWidth
                 type="submit"
@@ -218,11 +215,6 @@ export default function SignIn() {
                 Sign In
               </Button>
               <Grid container sx={{ p: 3 }}>
-                {/*   <Grid item>
-                  <Link to={"/signUp"} variant="body2">
-                    <Typography>Forgot password?</Typography>
-                  </Link>
-                </Grid> */}
                 <Grid item md>
                   <Box
                     sx={{

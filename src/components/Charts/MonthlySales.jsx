@@ -13,18 +13,10 @@ function MonthlySales(props) {
             height: "200vh",
           },
           xaxis: {
-            categories: [
-              "Octomber",
-              "November",
-              "December",
-              "January",
-              "February",
-            ],
-            // categories: props.categories,
-            /* categories: ["1","2","3","4","5","6","7","8","9","10","11",], */
+            categories: props.categories,
           },
           title: {
-            text: "Monthly Sales",
+            text: "Monthly Orders",
             align: "left",
             margin: 10,
             offsetX: 0,

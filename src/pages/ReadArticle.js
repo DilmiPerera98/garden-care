@@ -14,6 +14,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import Loading from "../components/Loading";
 import Message from "../components/Message";
 
+//reducer function
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_Request":
@@ -42,6 +43,8 @@ export default function ReadArticle() {
   });
 
   const navigate = useNavigate();
+
+  //fetching article based on article id
   useEffect(() => {
     const fetchData = async () => {
       dispatch({ type: "FETCH_REQUEST" });

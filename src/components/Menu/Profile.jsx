@@ -14,6 +14,8 @@ import { Store } from "../../store";
 export default function Profile(props) {
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { data } = props;
+
+  //handle menu
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -28,7 +30,6 @@ export default function Profile(props) {
     ctxDispatch({ type: "USER_SIGNOUT" });
     localStorage.removeItem("userInfo");
     localStorage.removeItem("checkoutData");
-    /*   localStorage.removeItem("bagItems"); */
 
     window.location.href = "/signin";
   };

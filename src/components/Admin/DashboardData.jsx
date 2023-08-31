@@ -13,6 +13,7 @@ import Message from "../Message";
 import { useState } from "react";
 import ViewOrderData from "./OrderData/ViewOrderData";
 
+//reducer function
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -39,12 +40,15 @@ function DashboardData() {
   const { state } = useContext(Store);
   const { userInfo } = state;
 
+  //initialize the arrays to store the sales data in monthly sales
   const [salesLabel, setSalesLabel] = useState([]);
   const [salesCount, setSalesCount] = useState([]);
 
+  //initialize the arrays to store the sales data in product wise sales
   const [categoryLabel, setCategoryLabel] = useState([]);
   const [categoryCount, setCategoryCount] = useState([]);
 
+  //fetching the data from the back end
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -59,12 +63,15 @@ function DashboardData() {
         let salesCounrArray = [];
         let categoryLabelArray = [];
         let categoryCounrArray = [];
+        console.log(data);
 
+        //store the data to the monthly sales
         data.dailyOrders.map((list) => {
           salesLabelArray.push(list._id);
           salesCounrArray.push(list.sales);
         });
 
+        //store the data to the product wise sales
         data.productCategories.map((list) => {
           categoryLabelArray.push(list._id);
           categoryCounrArray.push(list.count);
@@ -83,8 +90,6 @@ function DashboardData() {
     };
     fetchData();
   }, [userInfo]);
-  //console.log(categoryCount);
-  // console.log(summary);
 
   return (
     <Grid
@@ -99,7 +104,7 @@ function DashboardData() {
       ) : error ? (
         <Message variant="danger">{error}</Message>
       ) : (
-        <>
+        <Grid item xs={12}>
           <Paper
             sx={{
               display: "flex",
@@ -145,16 +150,16 @@ function DashboardData() {
             </Grid>
             <Grid item xs={12} md={3}>
               <SummaryCard
-                title={"Messages"}
+                title={"Daily Sales"}
                 number={
-                  summary.users && summary.users[0]
-                    ? summary.users[0].numUsers
+                  summary.dailySales && summary.dailySales[0]
+                    ? summary.dailySales[0].sales.toFixed(2)
                     : 0
                 }
               />
             </Grid>
           </Paper>
-        </>
+        </Grid>
       )}
       <Grid item xs={6}>
         <MonthlySales categories={salesLabel} data={salesCount} />

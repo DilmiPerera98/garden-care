@@ -2,6 +2,9 @@ import { Box, Button, Grid } from "@mui/material";
 import { Link } from "react-router-dom";
 import ContactUs from "../components/cards/ContactUs";
 import homeimg from "../Resources/home4.jpeg";
+import above1 from "../Resources/above1.jpg";
+import NewProducts from "./NewProducts";
+import Shop from "./Shop";
 export default function Home() {
   return (
     <div>
@@ -9,6 +12,7 @@ export default function Home() {
         <Grid
           container
           spacing={2}
+          height="80px"
           columns={{ xs: 4, sm: 4, md: 16 }}
           sx={{ fontFamily: "Averia Sans Libre, cursive" }}
         >
@@ -54,31 +58,21 @@ export default function Home() {
                       bgcolor: "#A0D5C2",
                     },
                     mt: 3,
-                    mb: 2,
+
                     backgroundColor: "#24936B",
                   }}
                 >
-                  Join Us
+                  Join with Us
                 </Button>
               </Link>
             </Box>
           </Grid>
-          {/* <Card sx={{backgroundColor:"#181a19",p:5,mt:"10vh",color:"white" ,display: "flex", flexDirection: "row",width:"98vw"}}>         
-                <Grid item xs={8} md={5} sx={{display: "flex",justifyContent:"center"}}>
-                  <Typography>Call Us</Typography><br/>
-                  <Typography>038 2249112</Typography>
-                </Grid>
-                <Grid xs={12} item md={5} sx={{display: "flex",justifyContent:"center"}}>
-                  <Typography>Address</Typography>
-                  <Typography>avvbb</Typography>
-                  <Typography>vfdh</Typography>
-                </Grid>
-                <Grid item xs={12} md={5} sx={{display: "flex",justifyContent:"center"}}>
-                  <Typography>Email</Typography>
-                  <Typography>038 2249112</Typography>
-                </Grid>
 
-          </Card> */}
+          <Grid item md={16}>
+            <h1>Newest Items:</h1>
+            <NewProducts />
+          </Grid>
+
           <Grid item md={16}>
             <ContactUs />
           </Grid>

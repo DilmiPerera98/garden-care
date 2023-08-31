@@ -10,18 +10,22 @@ import { Store } from "../../store";
 import Profile from "../Menu/Profile";
 import GuidenceModal from "../Modal/GuidenceModal";
 
+//this is the upper navbar
 function Navbar() {
   const [open, setOpen] = useState(false);
   const [gOpen, setGOpen] = useState(false);
+  const [userDetails, setUserDetails] = useState({});
   const handleOpen = () => {
     setOpen(true);
-  };
-  const handleGOpen = () => {
-    setGOpen(true);
   };
 
   const { state } = useContext(Store);
   const { bag, userInfo } = state;
+
+  const handleGOpen = () => {
+    setGOpen(true);
+    setUserDetails(userInfo);
+  };
 
   return (
     <div>
@@ -96,7 +100,7 @@ function Navbar() {
         </ul>
       </nav>
       <Bag open={open} setOpen={setOpen} />
-      <GuidenceModal gOpen={gOpen} setGOpen={setGOpen} />
+      <GuidenceModal gOpen={gOpen} setGOpen={setGOpen} userInfo={userDetails} />
       <Outlet />
     </div>
   );

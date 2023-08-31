@@ -31,13 +31,7 @@ function Bag({ open, setOpen }) {
   //--------------checkout handler----------
   const checkoutHandler = () => {
     handleClose();
-    /* if ("/signin") {
-      navigate("/checkout");
-    } else if (!"/signin") {
-      navigate("/signin");
-    } */
-    /* navigate("/signin?redirect=/checkout:redirect=/"); */ /*
-    navigate("/signin" ? "/checkout" : "/signIn"); */
+
     if ("/signin") {
       navigate("/checkout");
     } else {

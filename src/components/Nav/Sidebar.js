@@ -16,7 +16,8 @@ import { FaAngleLeft, FaBars, FaPowerOff } from "react-icons/fa";
 import logoimg from "../../Resources/logo.png";
 import { SideMenu } from "./SideMenu";
 import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
-/* import { mainListItems, secondaryListItems } from './listItems'; */
+
+//this is the side bar
 
 const drawerWidth = 240;
 
